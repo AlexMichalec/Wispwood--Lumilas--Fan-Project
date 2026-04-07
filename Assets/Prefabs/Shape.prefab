@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5566231833079813944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5482652839244969441}
+  - component: {fileID: 5269930475669576595}
+  m_Layer: 0
+  m_Name: Shape
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5482652839244969441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5566231833079813944}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.19, y: 0.73, z: -4.81}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5269930475669576595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5566231833079813944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 470593c47cb1127499030816a1d60d40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shape
+  choiceTilePrefab: {fileID: 7494511108546267374, guid: 67ce40255932c6e448ef98a567b266fb, type: 3}
+  tilePrefabs:
+  - {fileID: 5200289636737685521, guid: a9dcbf5541dc5544f8da2b0121d18017, type: 3}
+  - {fileID: 8340261716456510779, guid: 1acdb73d7b84e4047a0c06a8f37d16a4, type: 3}
+  - {fileID: 6194033513564348995, guid: 8433aa59f67dadd408349d36a85ddabb, type: 3}
+  - {fileID: 5277205414314821775, guid: 87214b2b67fb64942869548ad3c81173, type: 3}
+  distanceBetweenTiles: 0.5
+  spawnHeight: 0.1
+  spawnHeightChoice: 0.15
+  gridManager: {fileID: 0}
+  isFinal: 0
+  testing: 0
+  startPosition: {x: 0, y: 0}
+  badChoiceTilePrefab: {fileID: 8854442593638136304, guid: 22eba9522bf1a3c4bba0dfff324ab048, type: 3}
