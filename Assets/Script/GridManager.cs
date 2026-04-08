@@ -29,6 +29,7 @@ public class GridManager : MonoBehaviour
     public GameObject shapePrefab;
     private List<Shape> shapes = new List<Shape>();
     private GameObject currentShape;
+    public GameObject scoreNode;
     
 
     // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
@@ -47,6 +48,13 @@ public class GridManager : MonoBehaviour
         updateChoiceTile();
 
         
+    }
+
+    public void SubmitGrid()
+    {
+        Score myScore = scoreNode.GetComponent<Score>();
+        myScore.gridList = gridList;
+        myScore.SumUpScore();
     }
 
     void InitializeGrid()

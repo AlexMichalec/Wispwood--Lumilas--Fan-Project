@@ -8,6 +8,7 @@ public class Score : MonoBehaviour
     [Range(0,1)]
     [Tooltip("Percent of grid hidden/covered in trees")]
     public float treesRatio = 0.5f;
+
     [Tooltip("0 means don't add it to the Score")]
     [Range(0, 5)]
     public int pumpkinsScoreMethodIndex = 1;
@@ -18,7 +19,7 @@ public class Score : MonoBehaviour
     [Range(0, 5)]
     public int witchScoreMethodIndex = 1;
     [Tooltip("0 means don't add it to the Score")]
-    [Range(0, 5)]
+    [Range(0, 6)]
     public int orbScoreMethodIndex = 1;
     [Tooltip("0 means don't add it to the Score")]
     [Range(0, 5)]
@@ -51,7 +52,7 @@ public class Score : MonoBehaviour
 
     }
 
-    string [] SetInfoScoreMethods(int wispType, int methodIndex)
+    public static string [] GetInfoScoreMethods(int wispType, int methodIndex)
     {
         if (wispType == 2) 
         {
@@ -67,9 +68,9 @@ public class Score : MonoBehaviour
         {
             //HEARTS
             if (methodIndex == 0) return new string[] { "Empty Method", "No points (only Debug)" };
-            if (methodIndex == 1) return new string[] { "Promień Krzyżowy", "Każde Serce: 1p za każde Drzewo w tym samym rzędzie i tej samej kolumnie." };
-            if (methodIndex == 2) return new string[] { "Not Ready", "Not Ready Yet" };
-            if (methodIndex == 3) return new string[] { "Not Ready", "Not Ready Yet" };
+            if (methodIndex == 1) return new string[] { "Promień Krzyżowy", "Każde Serce: 1 punkt za każde Drzewo w tym samym rzędzie i tej samej kolumnie." };
+            if (methodIndex == 2) return new string[] { "Co z oczu, to z serca", "Każde Serce: 2 punkty za każde Drzewo obok niego" };
+            if (methodIndex == 3) return new string[] { "Śreżoga", "Każde Serce: 2 punkty za każde Drzewo poniżej w tej samej kolumnie" };
             if (methodIndex == 4) return new string[] { "Not Ready", "Not Ready Yet" };
             if (methodIndex == 5) return new string[] { "Not Ready", "Not Ready Yet" }; ;
         }
@@ -86,17 +87,29 @@ public class Score : MonoBehaviour
             //ORBS
             if (methodIndex == 0) return new string[] { "Empty Method", "No points (only Debug)" };
             if (methodIndex == 1) return new string[] { "Przyciągający blask", "Każdy Ognik: 2 punkty za każdy rodzaj duszka wokół niego." };
-            if (methodIndex == 2) return new string[] { "Światełko w tunelu", "Każdy Ognik: 2 punkty za każdy rofzaj duszka w tym rzędzie albo kolumnie (łącznie z tym Ognikiem)" };
+            if (methodIndex == 2) return new string[] { "Światełko w tunelu", "Każdy Ognik: 2 punkty za każdy rodzaj duszka w tym rzędzie albo kolumnie (łącznie z tym Ognikiem)" };
             if (methodIndex == 3) return new string[] { "Szukaj igły w stogu światła", "Którego rodzaju masz najmniej albo wcale? Każdy Ognik jest wart tyle punktów", "Ognik: 7, Dynia: 5, Wiedźma: 4, Serce: 3" };
+            if (methodIndex == 4) return new string[] { "Energia - synergia", "Każdy Ognik jest wart tyle punktów co najmniej wartościowy rodzaj duszka obok niego.", "Ognik: 4, Dynia: 5, Wiedźma: 6, Serce: 7" };
+            if (methodIndex == 5) return new string[] { "Not Ready", "Not Ready Yet" };
+            if (methodIndex == 6) return new string[] { "Not Ready", "Not Ready Yet" }; ;
+        }
+
+        if (wispType == 1)
+        {
+            //TREES
+            if (methodIndex == 0) return new string[] { "Empty Method", "No points (only Debug)" };
+            if (methodIndex == 1) return new string[] { "Co trzy drzewa, to nie jedno", "2 punkty za każdy rząd i każdą kolumnę, w którch są conajmniej 3 Drzewa." };
+            if (methodIndex == 2) return new string[] { "Ciągnie drzewo do lasu", "# punkty za każde Drzewo, obok którego są conajmniej 3 drzewa." };
+            if (methodIndex == 3) return new string[] { "Not Ready", "Not Ready Yet" };
             if (methodIndex == 4) return new string[] { "Not Ready", "Not Ready Yet" };
             if (methodIndex == 5) return new string[] { "Not Ready", "Not Ready Yet" }; ;
         }
-        
+
         return new string[] { "Error", "Wrong arguments" };
         
     }
 
-    void SumUpScore()
+    public void SumUpScore()
     {
         int result = 0;
         //ADD PUMPKIN SCORE
@@ -107,10 +120,32 @@ public class Score : MonoBehaviour
         result += ScoreWitches();
         //ADD ORB SCORE
         result += ScoreOrbs();
+        //ADD TREES SCORE
+        result += ScoreTrees();
         //If forest full add 2/4/6 points
         result += ScoreFullForest();
         myScore += result;
         userInterface.UpdateScore(myScore);
+        //TYMCZASOWO TU:
+        ShowDetailScore();
+    }
+
+    void ShowDetailScore()
+    {
+        int[] scoreArray = new int[] {0,0,0,0,0,0};
+        //ADD PUMPKIN SCORE
+        scoreArray[1]= ScorePumpkins();
+        //ADD HEARTS SCORE
+        scoreArray[2] = ScoreHearts();
+        //ADD WITCH SCORE
+        scoreArray[3] = ScoreWitches();
+        //ADD ORB SCORE
+        scoreArray[4] = ScoreOrbs();
+        //ADD TREES SCORE
+        scoreArray[5] = ScoreTrees();
+        //If forest full add 2/4/6 points
+        scoreArray[0] = ScoreFullForest();
+        userInterface.UpdateDetailedScore(scoreArray);
     }
 
     int ScorePumpkins()
@@ -127,6 +162,7 @@ public class Score : MonoBehaviour
     {
         int subScore = 0;
         if (heartScoreMethodIndex == 1) subScore = ScoreHeartsCross();
+        if (heartScoreMethodIndex == 2) subScore = ScoreHeartsAround();
         print("Hearts score: " + subScore);
         return subScore;
 
@@ -148,6 +184,7 @@ public class Score : MonoBehaviour
         if (orbScoreMethodIndex == 1) subScore += ScoreOrbsAround();
         if (orbScoreMethodIndex == 2) subScore += ScoreOrbsTunnel();
         if (orbScoreMethodIndex == 3) subScore += ScoreOrbsNeedle();
+        if (orbScoreMethodIndex == 4) subScore += ScoreOrbsSynergy();
         print("Orbs score: " + subScore);
         return subScore;
     }
@@ -155,6 +192,8 @@ public class Score : MonoBehaviour
     int ScoreTrees() 
     {
         int subScore = 0;
+        if (treeScoreMethodIndex == 1) subScore += ScoreTreesRowColumn();
+        if (treeScoreMethodIndex == 2) subScore += ScoreTreesAround();
         print("Trees score: " + subScore);
         return subScore;
     }
@@ -309,20 +348,7 @@ public class Score : MonoBehaviour
         print(toPrint);
     }
 
-    void CountNotTrees()
-    {
-        int result = 0;
-        for (int i = 0; i < gridList.Count; ++i)
-        {
-            for (int j = 0; j < gridList.Count; ++j)
-            {
-                if (gridList[i][j] > 1) result++;
-
-            }
-
-        }
-        userInterface.UpdateScore(result);
-    }
+    
 
     //Promień krzyżowy
     //for each heart wisp
@@ -346,6 +372,48 @@ public class Score : MonoBehaviour
 
             }
 
+        }
+        return result;
+    }
+
+    int ScoreHeartsAround()
+    {
+        int result = 0;
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for (int j = 0; j < gridList.Count; ++j)
+            {
+                if (gridList[i][j] == 3)
+                {
+                    if (i - 1 >= 0 && gridList[i - 1][j] == 1) result += 2;
+                    if (j - 1 >= 0 && gridList[i][j - 1] == 1) result += 2;
+                    if (i + 1 < gridList.Count && gridList[i + 1][j] == 1) result += 2;
+                    if (j + 1 < gridList[i].Count && gridList[i][j + 1] == 1) result += 2;
+                   
+                }
+
+            }
+        }
+        return result;
+    }
+
+    int ScoreHeartsColumnBelow()
+    {
+        int result = 0;
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for (int j = 0; j < gridList.Count; ++j)
+            {
+                if (gridList[i][j] == 3)
+                {
+                    for (int k = i+1; k < gridList.Count; ++k)
+                    {
+                        if (gridList[k][j] == 1) result += 2;
+                    }
+
+                }
+
+            }
         }
         return result;
     }
@@ -456,6 +524,69 @@ public class Score : MonoBehaviour
         return result;
     }
 
+    int ScoreOrbsSynergy()
+    {
+        int result = 0;
+        int[] pointsArray = new int[] { 0, 0, 5, 7, 6, 4, 0 };
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for(int j = 0; j < gridList.Count; ++j)
+            {
+                if (gridList[i][j] == 5)
+                {
+                    int orbPoints = 0;
+                    if (i - 1 >= 0 && pointsArray[gridList[i - 1][j]] > orbPoints) orbPoints = gridList[i - 1][j];
+                    if (j - 1 >= 0 && pointsArray[gridList[i][j - 1]] > orbPoints) orbPoints = gridList[i][j-1];
+                    if (i + 1 < gridList.Count && pointsArray[gridList[i + 1][j]] > orbPoints) orbPoints = gridList[i + 1][j];
+                    if (j + 1 < gridList[i].Count && pointsArray[gridList[i][j + 1]] > orbPoints) orbPoints = gridList[i][j+1];
+                    result += orbPoints;
+                }
+            }
+        }
+        return result;
+    }
+
+    int ScoreTreesRowColumn()
+    {
+        int result = 0;
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            int treeCounterRow = 0;
+            int treeCounterColumn = 0;
+            for (int j = 0; j < gridList.Count; ++j)
+            {
+                if (gridList[i][j] == 1) treeCounterRow++;
+                if (gridList[j][i] == 1) treeCounterColumn++;
+
+            }
+            if (treeCounterRow >= 3) result += 2;
+            if (treeCounterColumn >= 3) result += 2;
+
+        }
+        return result;
+    }
+
+    int ScoreTreesAround()
+    {
+        int result = 0;
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for (int j = 0; j < gridList.Count; ++j)
+            {
+             if (gridList[i][j] == 1)
+                {
+                    int treeCounter = 0;
+                    if (i - 1 >= 0 && gridList[i - 1][j] == 1) treeCounter++;
+                    if (j - 1 >= 0 && gridList[i][j - 1] == 1) treeCounter++;
+                    if (i + 1 < gridList.Count && gridList[i + 1][j] == 1) treeCounter++;
+                    if (j + 1 < gridList[i].Count && gridList[i][j + 1] == 1) treeCounter++;
+                    if (treeCounter >= 3) result += 3;
+                }
+                
+            }
+        }
+        return result;
+    }
 
     int ScoreFullForest()
     {
