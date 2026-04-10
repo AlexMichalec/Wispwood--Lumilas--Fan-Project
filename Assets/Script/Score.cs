@@ -44,12 +44,21 @@ public class Score : MonoBehaviour
         
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) && false)
         {
             SumUpScore();
 
         }
 
+    }
+
+    public void UpdateScoreMethod(int scoreType, int methodIndex)
+    {
+        if (scoreType == 0) treeScoreMethodIndex = methodIndex;
+        if (scoreType == 1) pumpkinsScoreMethodIndex = methodIndex;
+        if (scoreType == 2) heartScoreMethodIndex = methodIndex;
+        if (scoreType == 3) witchScoreMethodIndex = methodIndex;
+        if (scoreType == 4) orbScoreMethodIndex = methodIndex;
     }
 
     public static string [] GetInfoScoreMethods(int wispType, int methodIndex)
@@ -534,11 +543,12 @@ public class Score : MonoBehaviour
             {
                 if (gridList[i][j] == 5)
                 {
-                    int orbPoints = 0;
-                    if (i - 1 >= 0 && pointsArray[gridList[i - 1][j]] > orbPoints) orbPoints = gridList[i - 1][j];
-                    if (j - 1 >= 0 && pointsArray[gridList[i][j - 1]] > orbPoints) orbPoints = gridList[i][j-1];
-                    if (i + 1 < gridList.Count && pointsArray[gridList[i + 1][j]] > orbPoints) orbPoints = gridList[i + 1][j];
-                    if (j + 1 < gridList[i].Count && pointsArray[gridList[i][j + 1]] > orbPoints) orbPoints = gridList[i][j+1];
+                    int orbPoints = 99;
+                    if (i - 1 >= 0 && pointsArray[gridList[i - 1][j]] < orbPoints) orbPoints = pointsArray[gridList[i - 1][j]];
+                    if (j - 1 >= 0 && pointsArray[gridList[i][j - 1]] < orbPoints) orbPoints = pointsArray[gridList[i][j-1]];
+                    if (i + 1 < gridList.Count && pointsArray[gridList[i + 1][j]] < orbPoints) orbPoints = pointsArray[gridList[i + 1][j]];
+                    if (j + 1 < gridList[i].Count && pointsArray[gridList[i][j + 1]] < orbPoints) orbPoints = pointsArray[gridList[i][j+1]];
+                    if (orbPoints == 99) orbPoints = 0;
                     result += orbPoints;
                 }
             }

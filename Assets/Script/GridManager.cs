@@ -31,6 +31,7 @@ public class GridManager : MonoBehaviour
     private GameObject currentShape;
     public GameObject scoreNode;
     
+    
 
     // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
     void Start()
@@ -55,6 +56,7 @@ public class GridManager : MonoBehaviour
         Score myScore = scoreNode.GetComponent<Score>();
         myScore.gridList = gridList;
         myScore.SumUpScore();
+        
     }
 
     void InitializeGrid()
@@ -279,7 +281,7 @@ public class GridManager : MonoBehaviour
         if (tileIndex<0) tileIndex = Random.Range(0, 4);
         int gridTileIndex = 1;
         GameObject newTile = Instantiate(tilePrefabs[tileIndex]);
-        newTile.transform.rotation = new Quaternion(0, 0, 180, 0);
+        newTile.transform.rotation = Quaternion.Euler(0,0,180);
         Vector2 chosenPlace = possiblePlacesToAddTile[choiceIndex];
         AddNewTile(chosenPlace, newTile, gridTileIndex, nearChoiceLocation);
 
@@ -293,9 +295,9 @@ public class GridManager : MonoBehaviour
         bool isTree = Random.value > 0.5;
         Vector2 usedTile = new Vector2();
         int gridTileIndex = 1;
-        if (isTree) newTile.transform.rotation = new Quaternion(0, 0, 180, 0);
+        if (isTree) newTile.transform.rotation = Quaternion.Euler(0, 0, 180);
         else {
-            newTile.transform.Rotate(Vector3.up, 180);
+            newTile.transform.rotation = Quaternion.Euler(0, 180, 0);
             gridTileIndex = 2 + tileIndex; }
 
         //1. znajdź dowolny niezerowy kafelek
@@ -552,6 +554,32 @@ public class GridManager : MonoBehaviour
         return new Vector2();
     }
 
+    public void Deforest()
+    {
+        for (int i =0; i < gridList.Count; ++i)
+        {
+            for (int j = 0; j <gridList[i].Count; j++)
+            {
+                if (gridList[i][j] == 1)
+                {
+                    gridList[i][j] = 0;
+                    StartCoroutine(DisappearTree(gridList2[i][j]));
+                }
+            }
+        }
+    }
+
+    IEnumerator DisappearTree(GameObject tree)
+    {
+        Vector3 stepVector = tree.transform.localScale / 20;
+        for (int i = 1; i<20; ++i)
+        {
+            yield return new WaitForSeconds(0.05f);
+            tree.transform.localScale -= stepVector;
+        }
+        Destroy(tree.gameObject);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
@@ -624,6 +652,11 @@ public class GridManager : MonoBehaviour
             Destroy(choiceTile);
             printInnerGrid();
             
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Deforest();
+
         }
     }
 }

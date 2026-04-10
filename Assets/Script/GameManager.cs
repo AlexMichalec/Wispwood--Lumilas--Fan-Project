@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class GameManager : MonoBehaviour
     public int stacksAmount = 8;
     public float intervalBetweentiles = 0.2f;
     public bool flipped = true;
+    public int round = 1;
+    public GameObject gridManager;
+    public GameObject UINode;
+    public GameObject[] spawnPlatforms;
+    private List<List<GameObject>> tileStacks;
     void Start()
     {
         StartCoroutine(SpawnTiles());
@@ -57,7 +63,7 @@ public class GameManager : MonoBehaviour
                 float stackAngle = stackIndex * (360.0f / stacksAmount);
                 float tileHeight = 0.2f + intervalBetweentiles * (i - stackIndex * (tileAmount / stacksAmount));
                 Debug.Log(i+ " "+ stackIndex+ " "+ stackAngle);
-                Quaternion tileRotation = new Quaternion(0, 0, 180, 0);
+                Quaternion tileRotation = Quaternion.Euler(0, stackAngle, 180);
                 if (flipped) tileRotation = Quaternion.identity; 
 
                 Vector3 tilePosition = Quaternion.Euler(0, stackAngle, 0) * new Vector3(radius, tileHeight ,0);
@@ -65,11 +71,25 @@ public class GameManager : MonoBehaviour
 
             }
         }
+
+        for (int i = 0; i<spawnPlatforms.Length; i++)
+        {
+            Instantiate(tilePrefabs[Random.Range(0,4)], spawnPlatforms[i].transform.position + new Vector3(0,0.6f,0), Quaternion.Euler(0,180,0));
+        }
     }
 
     public void ResetGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void NewRound()
+    {
+        round++;
+        gridManager.GetComponent<GridManager>().Deforest();
+        gridManager.GetComponent<GridManager>().maxDimension += 1;
+        UINode.GetComponent<UI>().UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));
+        UINode.GetComponent<UI>().ResetDetailedScore();
     }
 
     void Update()

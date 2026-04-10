@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DarkBlue
+  m_Name: DarkBlue 1
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: 8f0ee2bb4cf44d042980e894a63a6a1e, type: 2}
+  m_Parent: {fileID: 2100000, guid: f19e12c45231231448a9baa2b688d2a2, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -36,8 +36,8 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.2031829, b: 0.4867924, a: 1}
-    - _Color: {r: 0, g: 0.20318288, b: 0.4867924, a: 1}
+    - _BaseColor: {r: 0, g: 0.15349975, b: 0.3660378, a: 1}
+    - _Color: {r: 0, g: 0.15349972, b: 0.36603776, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &9082734721465112564
