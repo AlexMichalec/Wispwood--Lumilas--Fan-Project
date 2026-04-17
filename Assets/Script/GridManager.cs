@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
 {
     public GameObject[] tilePrefabs;
     [SerializeField]
+    private GameObject catTilePrefab;
     private GameObject catTile;
     public int maxDimension = 4;
     public float distanceBetweenTiles = 0.4f;
@@ -30,7 +31,11 @@ public class GridManager : MonoBehaviour
     private List<Shape> shapes = new List<Shape>();
     private GameObject currentShape;
     public GameObject scoreNode;
-    
+    public float flipForce;
+    public float rotateForce;
+    public float flipHeight;
+    public float flipTime;
+    private bool flipping = false;
     
 
     // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
@@ -41,6 +46,15 @@ public class GridManager : MonoBehaviour
         Debug.Log("MC " + moveCenter);
         StartCoroutine(lateUpdateChoiceTile());
         
+    }
+
+    public void resetCat()
+    {
+        Vector3 catPos = catTile.transform.position;
+        Quaternion catRot = catTile.transform.rotation;
+        Destroy(catTile);
+        catTile = Instantiate(catTilePrefab, catPos, catRot);
+        gridList2[0][0] = catTile;
     }
 
     IEnumerator lateUpdateChoiceTile()
@@ -63,7 +77,8 @@ public class GridManager : MonoBehaviour
     {
         gridList.Add(new List<int> { 6 });
         Vector3 catPosition = new Vector3(transform.position.x,spawnHeight,transform.position.z);
-        gridList2.Add(new List<GameObject> { Instantiate(catTile, catPosition, new Quaternion(0, 180, 0, 0) )});
+        catTile = Instantiate(catTilePrefab, catPosition, new Quaternion(0, 180, 0, 0));
+        gridList2.Add(new List<GameObject> { catTile});
     }
 
     void addTile()
@@ -580,6 +595,47 @@ public class GridManager : MonoBehaviour
         Destroy(tree.gameObject);
     }
 
+    IEnumerator FlipCatTile()
+    {
+        catTile.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY;
+        catTile.GetComponent<Rigidbody>().AddForce(Vector3.up * flipForce);
+        catTile.GetComponent<Rigidbody>().AddTorque(Vector3.left * rotateForce);
+       
+
+        yield return new WaitForSeconds(0.5f);
+        catTile.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        flipping = false;
+        
+    }
+
+    IEnumerator FlipCatTile2()
+    {
+        Vector3 oldPos = catTile.transform.position;
+        Quaternion startRotation = catTile.transform.rotation;
+        Quaternion endRotation = catTile.transform.rotation * Quaternion.Euler(180,0,0);
+        float counter = 0;
+        while(counter < flipTime / 2)
+        {
+            catTile.transform.position = Vector3.Lerp(oldPos, oldPos + new Vector3(0, flipHeight, 0), counter / (flipTime/2));
+            catTile.transform.rotation = Quaternion.Lerp(startRotation, endRotation, counter / flipTime);
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        Vector3 newPos = catTile.transform.position;
+        while (counter < flipTime)
+        {
+            catTile.transform.position = Vector3.Lerp(oldPos + new Vector3(0, flipHeight, 0), oldPos, (counter - flipTime/2) / (flipTime/2));
+            catTile.transform.rotation = Quaternion.Lerp(startRotation, endRotation, counter / flipTime);
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        catTile.transform.rotation = endRotation;
+        catTile.transform.position = oldPos;
+        flipping = false;
+        GameObject.Find("UI").GetComponent<UI>().flipCat();
+
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
@@ -658,5 +714,14 @@ public class GridManager : MonoBehaviour
             Deforest();
 
         }
+        if (Input.GetKeyDown(KeyCode.K) && !flipping)
+        {
+            flipping = true;
+            StartCoroutine(FlipCatTile2());
+          
+
+
+        }
+
     }
 }

@@ -18,7 +18,14 @@ public class UI : MonoBehaviour
     private Score scoreManager;
     public GameObject detailedScoreNode;
     public GameObject nextRoundButton;
+    public GameObject MenuPanel;
+    public GameObject StepOne;
+    public GameObject CatTilePrefab;
+    public Material[] CatMaterials;
+    public Material[] CatMaterialsHidden;
     public int round = 4;
+    public bool testingMenu = false;
+    public TextMeshProUGUI catIsHiddenText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,7 +34,27 @@ public class UI : MonoBehaviour
         InitializeScoreOptions();
         ShowScoreMethod(5);
         ResetDetailedScore();
+        if (testingMenu)
+        {
+            StepOne.SetActive(true);
+            MenuPanel.SetActive(true);
+        }
+        
+       // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
+        //CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[0];
 
+
+
+    }
+
+    public void SetCatMaterial(int materialIndex)
+    {
+        if (CatMaterials.Length == 0) return;
+        int index = materialIndex % CatMaterials.Length;
+        int index2 = materialIndex % CatMaterialsHidden.Length;
+        CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
+        CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index2];
+        GameObject.Find("Forest").GetComponent<GridManager>().resetCat();
     }
 
     void InitializeScoreOptions()
@@ -92,6 +119,11 @@ public class UI : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void flipCat()
+    {
+        catIsHiddenText.gameObject.SetActive(!catIsHiddenText.gameObject.activeSelf);
     }
 
     public void UpdateScore(int score)

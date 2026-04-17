@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2580762705807073885, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a12e9acb6c6ddb946961af3f0697c8ea, type: 2}
+    - target: {fileID: 2743379373109444321, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8f0ee2bb4cf44d042980e894a63a6a1e, type: 2}
     - target: {fileID: 4061324138007494517, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.0905367
@@ -51,7 +59,7 @@ PrefabInstance:
     - target: {fileID: 4791413903412752712, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a55fba5f24e574849b011df14eee6b19, type: 2}
+      objectReference: {fileID: 2100000, guid: a12e9acb6c6ddb946961af3f0697c8ea, type: 2}
     - target: {fileID: 8656518934233509579, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: m_Name
       value: CatTile Variant

@@ -20,5 +20,6 @@ public class ShowDescOnMouseEnter : MonoBehaviour
     private void OnMouseEnter()
     {
         print("IN");
+        
     }
 }
