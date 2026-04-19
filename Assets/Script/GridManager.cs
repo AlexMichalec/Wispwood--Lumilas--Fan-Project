@@ -28,7 +28,6 @@ public class GridManager : MonoBehaviour
     public Vector3 MouseePos;
     private float moveCenter = 0.02f;
     public GameObject shapePrefab;
-    private List<Shape> shapes = new List<Shape>();
     private GameObject currentShape;
     public GameObject scoreNode;
     public float flipForce;
@@ -36,6 +35,7 @@ public class GridManager : MonoBehaviour
     public float flipHeight;
     public float flipTime;
     private bool flipping = false;
+    private int treeTurnCounter = 0;
     
 
     // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
@@ -595,7 +595,7 @@ public class GridManager : MonoBehaviour
         Destroy(tree.gameObject);
     }
 
-    IEnumerator FlipCatTile()
+    IEnumerator FlipCatTileOld()
     {
         catTile.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY;
         catTile.GetComponent<Rigidbody>().AddForce(Vector3.up * flipForce);
@@ -608,7 +608,7 @@ public class GridManager : MonoBehaviour
         
     }
 
-    IEnumerator FlipCatTile2()
+    public IEnumerator FlipCatTile()
     {
         Vector3 oldPos = catTile.transform.position;
         Quaternion startRotation = catTile.transform.rotation;
@@ -632,16 +632,36 @@ public class GridManager : MonoBehaviour
         catTile.transform.rotation = endRotation;
         catTile.transform.position = oldPos;
         flipping = false;
-        GameObject.Find("UI").GetComponent<UI>().flipCat();
+        //GameObject.Find("UI").GetComponent<UI>().flipCat();
 
+    }
+
+    public void AddNewShape(int shapeType, int wispType)
+    {
+        Vector2 catPosition = FindCatTile();
+        Vector3 catTilePosition = gridList2[(int)catPosition.x][(int)catPosition.y].transform.position;
+        Vector3 shapePosition = catTilePosition;
+        GameObject newShape = Instantiate(shapePrefab, shapePosition, Quaternion.identity);
+        newShape.GetComponent<Shape>().startPosition = catPosition;
+        newShape.GetComponent<Shape>().GenerateFirstTime(shapeType, wispType);
+        currentShape = newShape;
+        Destroy(choiceTile);
+        print("FINISH");
+    }
+
+    public void TreeTurn()
+    {
+        treeTurnCounter = 0;
+        PreparePossiblePlaces();
+        setNextChoice();
     }
 
     void Update()
     {
+        if (treeTurnCounter >= 3) return;
         if (Input.GetKeyDown(KeyCode.P))
         {
             if (currentShape == null)
-            //if (shapes.Count == 0 || shapes[shapes.Count-1].isFinal)
             {
                 Vector2 catPosition = FindCatTile();
                 Vector3 catTilePosition = gridList2[(int)catPosition.x][(int)catPosition.y].transform.position;
@@ -649,7 +669,6 @@ public class GridManager : MonoBehaviour
                 GameObject newShape = Instantiate(shapePrefab, shapePosition, Quaternion.identity);
                 newShape.GetComponent<Shape>().startPosition = catPosition;
                 currentShape = newShape;
-                shapes.Add(newShape.GetComponent<Shape>());
                 Destroy(choiceTile);
             }
 
@@ -704,9 +723,16 @@ public class GridManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            treeTurnCounter++;
+            GameObject.Find("UI").GetComponent<UI>().TreeCounterUp();
             AddTree();
             Destroy(choiceTile);
             printInnerGrid();
+            if (treeTurnCounter < 3)
+            {
+                PreparePossiblePlaces();
+                setNextChoice();
+            }
             
         }
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -717,7 +743,7 @@ public class GridManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K) && !flipping)
         {
             flipping = true;
-            StartCoroutine(FlipCatTile2());
+            StartCoroutine(FlipCatTile());
           
 
 

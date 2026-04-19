@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class Shape : MonoBehaviour
 {
@@ -26,18 +27,8 @@ public class Shape : MonoBehaviour
     {
         gridManager = GameObject.Find("Forest").GetComponent<GridManager>();
         InitializeShapesList();
-        GenerateRandom();
-        
+        //GenerateRandom();
 
-        if (!testing && false) 
-        {
-            
-            choiceTilePrefab = gridManager.choiceTilePrefab;
-            tilePrefabs = gridManager.tilePrefabs;
-            distanceBetweenTiles = gridManager.distanceBetweenTiles;
-
-        }
-        
         
         
     }
@@ -89,13 +80,15 @@ public class Shape : MonoBehaviour
     {
         ghostTypeIndex = Random.Range(0, 4);
         ghostIndex = 0;
-        GenerateFirstTime(Random.Range(0,shapesList.Count));
+        GenerateFirstTime(Random.Range(0,shapesList.Count), ghostTypeIndex);
     }
 
-   public  void GenerateFirstTime(int shapeIndex)
+   public  void GenerateFirstTime(int shapeIndex, int WispType)
     {
-        
+        InitializeShapesList();
+        gridManager = GameObject.Find("Forest").GetComponent<GridManager>();
         myShape = shapesList[shapeIndex];
+        ghostTypeIndex = WispType;
         Generate();
     }
 
@@ -321,7 +314,15 @@ public class Shape : MonoBehaviour
                 tileList[i], tileTypeIndex);
         }
 
-        gridManager.printInnerGrid();
+        //gridManager.printInnerGrid();
+        StartCoroutine(WaitMoveCamera());
+        
+    }
+
+    IEnumerator WaitMoveCamera()
+    {
+        yield return new WaitForSeconds(1);
+        GameObject.Find("Main Camera").GetComponent<MoveCamera>().changePosition();
         Destroy(gameObject);
     }
 
@@ -332,7 +333,7 @@ public class Shape : MonoBehaviour
         void Update()
     {
         if (isFinal) return;
-        if (Input.GetKeyDown(KeyCode.S)) GenerateRandom();
+        //if (Input.GetKeyDown(KeyCode.S)) GenerateRandom();
         if (Input.GetKeyDown(KeyCode.E))
         {
             RotateRight();
@@ -343,7 +344,7 @@ public class Shape : MonoBehaviour
             RotateLeft();
             Generate();
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             FlipShape();
             Generate();
@@ -358,19 +359,19 @@ public class Shape : MonoBehaviour
             changeGhostIndex();
             Generate();
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             MoveUp();
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             MoveDown();
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             MoveLeft();
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             MoveRight();
         }

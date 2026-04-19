@@ -493,8 +493,8 @@ public class Score : MonoBehaviour
                     List<int> tempList2 = new List<int>();
                     for (int k = 0; k < gridList.Count; ++k)
                     { 
-                        if (gridList[i + k][j] > 1 && gridList[i + k][j] < 6 && !tempList1.Contains(gridList[i + k][j])) tempList1.Add(gridList[i + k][j]);
-                        if (gridList[i][j + k] > 1 && gridList[i][j + k] < 6 && !tempList2.Contains(gridList[i][j + k])) tempList2.Add(gridList[i][j + k]);
+                        if (gridList[k][j] > 1 && gridList[k][j] < 6 && !tempList1.Contains(gridList[i + k][j])) tempList1.Add(gridList[i + k][j]);
+                        if (gridList[i][k] > 1 && gridList[i][k] < 6 && !tempList2.Contains(gridList[i][j + k])) tempList2.Add(gridList[i][j + k]);
                     }
                     result += Mathf.Max(tempList1.Count, tempList2.Count) * 2;
                 }

@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 2580762705807073885, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a12e9acb6c6ddb946961af3f0697c8ea, type: 2}
+      objectReference: {fileID: 2100000, guid: e31d08ca9bd84474a898b999d3a2644c, type: 2}
     - target: {fileID: 2743379373109444321, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -59,7 +59,7 @@ PrefabInstance:
     - target: {fileID: 4791413903412752712, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a12e9acb6c6ddb946961af3f0697c8ea, type: 2}
+      objectReference: {fileID: 2100000, guid: fb2abc2618e99054697afe76c0b4bda4, type: 2}
     - target: {fileID: 8656518934233509579, guid: e6a2c551e5223514eb017f918b4c7798, type: 3}
       propertyPath: m_Name
       value: CatTile Variant

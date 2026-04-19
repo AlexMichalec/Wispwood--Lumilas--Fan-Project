@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4778668
 RectTransform:
   m_ObjectHideFlags: 0
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 52181903}
   - component: {fileID: 52181902}
   m_Layer: 5
-  m_Name: Play Button (4)
+  m_Name: BottomRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,11 +303,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 839446203}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -79, y: 50}
+  m_AnchoredPosition: {x: 134.5, y: -66.5}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &52181902
@@ -362,6 +362,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3002,7 +3014,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: b390e600ba5ed7d4a8ebac39ab8c8473, type: 3}
+  m_Texture: {fileID: 2800000, guid: 5a5d8603405dda9478db3cf08a035d7d, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3322,7 +3334,7 @@ GameObject:
   - component: {fileID: 441810436}
   - component: {fileID: 441810435}
   m_Layer: 5
-  m_Name: Play Button (3)
+  m_Name: TopLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3341,11 +3353,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1192411329}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -348, y: 184.6875}
+  m_AnchoredPosition: {x: -134.5, y: 68.1875}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &441810435
@@ -3396,6 +3408,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6888,7 +6912,18 @@ MonoBehaviour:
   topText: {fileID: 2134561752}
   detailedScoreNode: {fileID: 1946773222}
   nextRoundButton: {fileID: 1064795118}
+  MenuPanel: {fileID: 4778667}
+  StepOne: {fileID: 1890045560}
+  CatTilePrefab: {fileID: 6198161037528683181, guid: 7cbecd132da814e4b89010336d9470d5, type: 3}
+  CatMaterials:
+  - {fileID: 2100000, guid: fb2abc2618e99054697afe76c0b4bda4, type: 2}
+  - {fileID: 2100000, guid: a55fba5f24e574849b011df14eee6b19, type: 2}
+  CatMaterialsHidden:
+  - {fileID: 2100000, guid: e31d08ca9bd84474a898b999d3a2644c, type: 2}
+  - {fileID: 2100000, guid: f19e12c45231231448a9baa2b688d2a2, type: 2}
   round: 4
+  testingMenu: 0
+  catIsHiddenText: {fileID: 1215684164}
 --- !u!114 &808890010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8777,6 +8812,8 @@ MonoBehaviour:
   scoreNode: {fileID: 1200114620}
   flipForce: 340
   rotateForce: 100
+  flipHeight: 0.8
+  flipTime: 0.5
 --- !u!64 &1010832362
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9882,6 +9919,8 @@ MonoBehaviour:
   - {fileID: 1975332127}
   - {fileID: 701963696}
   - {fileID: 811329875}
+  pondFlipTime: 0.5
+  pondFlipMaxHeight: 1.5
 --- !u!4 &1133215563
 Transform:
   m_ObjectHideFlags: 0
@@ -10067,7 +10106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: b390e600ba5ed7d4a8ebac39ab8c8473, type: 3}
+  m_Texture: {fileID: 2800000, guid: 5a5d8603405dda9478db3cf08a035d7d, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -10263,7 +10302,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1215684163
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11216,6 +11255,47 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1407552506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1407552507}
+  m_Layer: 5
+  m_Name: Cats
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1407552507
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407552506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 441810434}
+  - {fileID: 1674389188}
+  - {fileID: 1661825311}
+  - {fileID: 1673413889}
+  - {fileID: 1947505651}
+  - {fileID: 52181901}
+  m_Father: {fileID: 1637875978}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -213.5, y: 116.5}
+  m_SizeDelta: {x: 389, y: 256.375}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1418975099
 GameObject:
@@ -12852,7 +12932,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1637875978
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12865,12 +12945,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1947505651}
-  - {fileID: 1673413889}
-  - {fileID: 52181901}
-  - {fileID: 1674389188}
-  - {fileID: 441810434}
-  - {fileID: 1661825311}
+  - {fileID: 1407552507}
   - {fileID: 733926544}
   m_Father: {fileID: 4778668}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13023,7 +13098,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: b390e600ba5ed7d4a8ebac39ab8c8473, type: 3}
+  m_Texture: {fileID: 2800000, guid: 5a5d8603405dda9478db3cf08a035d7d, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -13318,7 +13393,7 @@ GameObject:
   - component: {fileID: 1661825313}
   - component: {fileID: 1661825312}
   m_Layer: 5
-  m_Name: Play Button (5)
+  m_Name: TopRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13337,11 +13412,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1645379290}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -79, y: 184.6875}
+  m_AnchoredPosition: {x: 134.5, y: 68.1875}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1661825312
@@ -13396,6 +13471,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -13928,7 +14015,7 @@ GameObject:
   - component: {fileID: 1673413891}
   - component: {fileID: 1673413890}
   m_Layer: 5
-  m_Name: Play Button (2)
+  m_Name: BottomLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13947,11 +14034,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1775214021}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -348, y: 50}
+  m_AnchoredPosition: {x: -134.5, y: -66.5}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1673413890
@@ -14010,6 +14097,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1673413891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14061,7 +14160,7 @@ GameObject:
   - component: {fileID: 1674389190}
   - component: {fileID: 1674389189}
   m_Layer: 5
-  m_Name: Play Button (1)
+  m_Name: TopCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14080,11 +14179,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1807757093}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -214, y: 183}
+  m_AnchoredPosition: {x: -0.5, y: 66.5}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1674389189
@@ -14139,6 +14238,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -15667,7 +15778,7 @@ GameObject:
   - component: {fileID: 1947505653}
   - component: {fileID: 1947505652}
   m_Layer: 5
-  m_Name: Play Button
+  m_Name: BottomCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15686,11 +15797,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 381029108}
-  m_Father: {fileID: 1637875978}
+  m_Father: {fileID: 1407552507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -214, y: 48.3125}
+  m_AnchoredPosition: {x: -0.5, y: -68.1875}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1947505652
@@ -15745,6 +15856,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 808890009}
+        m_TargetAssemblyTypeName: UI, Assembly-CSharp
+        m_MethodName: SetCatMaterial
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

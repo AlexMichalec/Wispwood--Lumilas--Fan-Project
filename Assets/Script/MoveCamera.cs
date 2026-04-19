@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.InputSystem.Android;
 
 public class MoveCamera : MonoBehaviour
 {
@@ -37,6 +38,22 @@ public class MoveCamera : MonoBehaviour
 
     IEnumerator moveCamera()
     {
+        Vector3 startPosition = transform.position;
+        Vector3 endPostion = targetPositions[targetIndex];
+        float counter = 0;
+        while(counter < fullTime)
+        {
+            yield return null;
+            transform.position = Vector3.Lerp(startPosition,endPostion, counter/fullTime);
+            counter += Time.deltaTime;
+        }
+        transform.position = endPostion;
+        moving = false;
+        if (targetIndex == 1) GameObject.Find("UI").GetComponent<UI>().ShowPondActions();
+    }
+
+    IEnumerator moveCameraOld()
+    {
         Vector3 distance = transform.position - targetPositions[targetIndex];
         for (int i = 0; i < steps; ++i)
         {
@@ -44,5 +61,6 @@ public class MoveCamera : MonoBehaviour
             transform.position -= distance / steps;
         }
         moving = false;
+        if (targetIndex == 1) GameObject.Find("UI").GetComponent<UI>().ShowPondActions();
     }
 }

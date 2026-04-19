@@ -26,6 +26,12 @@ public class UI : MonoBehaviour
     public int round = 4;
     public bool testingMenu = false;
     public TextMeshProUGUI catIsHiddenText;
+    public GameObject pondActions;
+    public GameObject treeTurnActions;
+    public TextMeshProUGUI treeCounter;
+    private int treeCounterInt = 0;
+    public GameObject CatActionWispsButton;
+    public GameObject CatActionsShapesButton;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -160,5 +166,43 @@ public class UI : MonoBehaviour
 
 
     }
+
+    public void HidePondActions()
+    {
+        pondActions.SetActive(false);
+    }
+
+    public void ShowPondActions()
+    {
+        CatActionWispsButton.SetActive(true);
+        CatActionsShapesButton.SetActive(false);
+        pondActions.SetActive(true);
+    }
+
+    public void HideTreeTurnActions()
+    {
+        treeTurnActions.SetActive(false);
+    }
+
+    public void ShowTreeTurnActions()
+    {
+        treeCounter.text = "0/3";
+        treeCounterInt = 0;
+        treeTurnActions.SetActive(true);
+    }
+
+    public void TreeCounterUp()
+    {
+        treeCounterInt++;
+        treeCounter.text = treeCounterInt + "/3";
+    }
+
+    public void ShowCatShapesButton()
+    {
+        CatActionWispsButton.SetActive(false);
+        CatActionsShapesButton.SetActive(true);
+    }
+
+
 
 }
