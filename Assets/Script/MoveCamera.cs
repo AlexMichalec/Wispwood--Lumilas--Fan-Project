@@ -6,12 +6,22 @@ using UnityEngine.InputSystem.Android;
 
 public class MoveCamera : MonoBehaviour
 {
+    [Header("General")]
     public List<Vector3> targetPositions;
     public List<Quaternion> targetRotations;
     public int targetIndex;
-    public int steps = 100;
+
+    [UnityEngine.Range(0f, 3f)]
     public float fullTime = 2.0f;
+
+    [HideInInspector]
     public bool moving = false;
+
+    [Header("Navigation")]
+    public UI userInterface;
+    
+    [HideInInspector] //Old version
+    public int steps = 100;
 
     void Start()
     {
@@ -49,7 +59,11 @@ public class MoveCamera : MonoBehaviour
         }
         transform.position = endPostion;
         moving = false;
-        if (targetIndex == 1) GameObject.Find("UI").GetComponent<UI>().ShowPondActions();
+        if (targetIndex == 1)
+        {
+            userInterface.ShowPondActions();
+            
+                }
     }
 
     IEnumerator moveCameraOld()
@@ -61,6 +75,6 @@ public class MoveCamera : MonoBehaviour
             transform.position -= distance / steps;
         }
         moving = false;
-        if (targetIndex == 1) GameObject.Find("UI").GetComponent<UI>().ShowPondActions();
+        if (targetIndex == 1) userInterface.ShowPondActions();
     }
 }

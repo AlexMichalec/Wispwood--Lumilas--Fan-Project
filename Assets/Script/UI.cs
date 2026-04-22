@@ -6,6 +6,16 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem.Android;
 public class UI : MonoBehaviour
 {
+
+    [Header("Menu")]
+    public bool testingMenu = false;
+    public GameObject MenuPanel;
+    public GameObject StepOne;
+    public GameObject CatTilePrefab;
+    public Material[] CatMaterials;
+    public Material[] CatMaterialsHidden;
+
+    [Header("Scoring - UI")]
     public TextMeshProUGUI scoreText;
     public TMP_Dropdown[] scoreMethodDropdowns;
     public Color[] descriptionPanelColors;
@@ -13,30 +23,36 @@ public class UI : MonoBehaviour
     public TextMeshProUGUI[] detailedScoreTexts;
     public TextMeshProUGUI[] descriptionTexts;
     public Image panelImage;
-    public GameObject scoreNode;
-    public TextMeshProUGUI topText;
-    private Score scoreManager;
     public GameObject detailedScoreNode;
-    public GameObject nextRoundButton;
-    public GameObject MenuPanel;
-    public GameObject StepOne;
-    public GameObject CatTilePrefab;
-    public Material[] CatMaterials;
-    public Material[] CatMaterialsHidden;
-    public int round = 4;
-    public bool testingMenu = false;
+
+    [Header("Global - UI")]
     public TextMeshProUGUI catIsHiddenText;
+    public TextMeshProUGUI topText;
+    public GameObject nextRoundButton;
+    public int round = 4;
+
+    [Header("Pond - UI")]
     public GameObject pondActions;
+    public GameObject DealNewWispsButton;
+    public GameObject CatActionWispsButton;
+    public GameObject CatActionsShapesButton;
+
+    [Header("Forest - UI")]
+    public GameObject ArrowButtons;
+    public GameObject ArrowForShapesButtons;
     public GameObject treeTurnActions;
     public TextMeshProUGUI treeCounter;
     private int treeCounterInt = 0;
-    public GameObject CatActionWispsButton;
-    public GameObject CatActionsShapesButton;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [Header("Navigation")]
+    public GameManager gameManager;
+    public GridManager gridManager;
+    public Score scoreManager;
+
+
     void Start()
     {
         scoreText.text = "Score: 0";
-        scoreManager = scoreNode.GetComponent<Score>();
         InitializeScoreOptions();
         ShowScoreMethod(5);
         ResetDetailedScore();
@@ -60,7 +76,7 @@ public class UI : MonoBehaviour
         int index2 = materialIndex % CatMaterialsHidden.Length;
         CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
         CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index2];
-        GameObject.Find("Forest").GetComponent<GridManager>().resetCat();
+        gridManager.resetCat();
     }
 
     void InitializeScoreOptions()
@@ -177,6 +193,7 @@ public class UI : MonoBehaviour
         CatActionWispsButton.SetActive(true);
         CatActionsShapesButton.SetActive(false);
         pondActions.SetActive(true);
+        DealNewWispsButton.SetActive(gameManager.CanDealNewWispsForFree());
     }
 
     public void HideTreeTurnActions()
@@ -201,6 +218,17 @@ public class UI : MonoBehaviour
     {
         CatActionWispsButton.SetActive(false);
         CatActionsShapesButton.SetActive(true);
+    }
+
+    public void HideArrows()
+    {
+        ArrowButtons.SetActive(false);
+    }
+
+    public void ShowArrowsForShapes()
+    {
+        ArrowButtons.SetActive(true);
+        ArrowForShapesButtons.SetActive(true);
     }
 
 

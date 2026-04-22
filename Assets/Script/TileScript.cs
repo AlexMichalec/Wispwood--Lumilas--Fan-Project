@@ -25,6 +25,7 @@ public class TileScript : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (!inPond) return;
         gameObject.GetComponentInChildren<ParticleSystem>().Stop();
         GameObject.Find("GameManager").GetComponent<GameManager>().ChooseWisp(gameObject);
     }

@@ -10,26 +10,39 @@ using static UnityEngine.LowLevelPhysics2D.PhysicsShape;
 public class GameManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [Header("Tiles - Spawning")]
     public GameObject[] tilePrefabs;
     public float radius;
     public int tileAmount = 40;
     public int stacksAmount = 8;
-    public float intervalBetweentiles = 0.2f;
-    public bool flipped = true;
-    public int round = 1;
-    public GameObject gridManager;
-    public GameObject UINode;
+    public float intervalBetweenTiles = 0.2f;
+    
+
+    [Header("Pond - Spawning")]
     public GameObject[] spawnPlatforms;
-    private List<List<GameObject>> tileStacks = new List<List<GameObject>>();
     public float pondFlipTime = 0.5f;
     public float pondFlipMaxHeight = 1.5f;
+
+    private List<List<GameObject>> tileStacks = new List<List<GameObject>>();
     private List<GameObject> pondTiles = new List<GameObject>();
+
+    [Header("Shapes - Spawning")]
     public List<GameObject> shapeChoicePrefabs;
     private List<GameObject> shapeChoices = new List<GameObject>();
     public float shapeChoicesRadius = 1;
     public float shapeChoiceHeight = 0.1f;
-    private GameObject chosenWisp;
+    
+    [Header("Others")]
+    public int round = 1;
     public bool isCatHidden = false;
+    private GameObject chosenWisp;
+
+    [Header("Navigation")]
+    public GridManager gridManager;
+    public UI userInterface;
+    public MoveCamera cameraMover;
+
 
     void Start()
     {
@@ -56,6 +69,7 @@ public class GameManager : MonoBehaviour
             Quaternion rot = Quaternion.Euler(0, i*45f + 22.5f, 0);
             Vector3 pos = new Vector3(shapeChoicesRadius, shapeChoiceHeight, 0);
             GameObject newChoice = Instantiate(shapeChoicePrefabs[index], rot * pos, rot);
+            newChoice.GetComponent<ShapeChoice>().gameManager = this;
             shapeChoices.Add(newChoice);
         }
     }
@@ -101,10 +115,9 @@ public class GameManager : MonoBehaviour
                 int colorIndex = colorList[i];
                 int stackIndex = i / (tileAmount / stacksAmount);
                 float stackAngle = stackIndex * (360.0f / stacksAmount);
-                float tileHeight = 0.2f + intervalBetweentiles * (i - stackIndex * (tileAmount / stacksAmount));
+                float tileHeight = 0.2f + intervalBetweenTiles * (i - stackIndex * (tileAmount / stacksAmount));
                // Debug.Log(i+ " "+ stackIndex+ " "+ stackAngle);
                 Quaternion tileRotation = Quaternion.Euler(0, stackAngle, 180);
-                if (flipped) tileRotation = Quaternion.identity; 
 
                 Vector3 tilePosition = Quaternion.Euler(0, stackAngle, 0) * new Vector3(radius, tileHeight ,0);
                 GameObject newTile = Instantiate(tilePrefabs[colorIndex], tilePosition, tileRotation);
@@ -128,10 +141,10 @@ public class GameManager : MonoBehaviour
     public void NewRound()
     {
         round++;
-        gridManager.GetComponent<GridManager>().Deforest();
-        gridManager.GetComponent<GridManager>().maxDimension += 1;
-        UINode.GetComponent<UI>().UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));
-        UINode.GetComponent<UI>().ResetDetailedScore();
+        gridManager.Deforest();
+        gridManager.maxDimension += 1;
+        userInterface.UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));
+        userInterface.ResetDetailedScore();
     }
 
     IEnumerator PondFlip(GameObject flippedTile, Vector3 newPosition, float flipTime, float maxHeight)
@@ -184,6 +197,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DealNewWisps()
+    {
+        //place to put "if (not enough wisps)" in future
+        StartCoroutine(PondFlipAll());
+    }
+
+    public bool CanDealNewWispsForFree()
+    {
+        //Player can deal new wisps using cat action before their turn or for free when:
+        //a) all places for wisps in pond are empty or
+        bool isEmpty = true;
+        //b) all wisps in the pond are the same type
+        bool isTheSameType = true;
+        int firstType = -1;
+        for (int i = 0; i < pondTiles.Count; ++i)
+        {
+            if (pondTiles[i] == null) continue;
+            isEmpty = false;
+            int wispType = pondTiles[i].GetComponent<TileScript>().wispType;
+            if (firstType == -1) firstType = wispType;
+            else if (firstType != wispType) isTheSameType = false;
+        }
+
+        return isEmpty || isTheSameType;
+    }
+
     public void ChooseWisp(GameObject WispTile)
     {
         int pondIndex = WispTile.GetComponent<TileScript>().pondIndex;
@@ -192,7 +231,7 @@ public class GameManager : MonoBehaviour
         shapeChoices[indexBefore].GetComponent<ShapeChoice>().Activate();
         shapeChoices[indexAfter].GetComponent<ShapeChoice>().Activate();
         chosenWisp = WispTile;
-        GameObject.Find("UI").GetComponent<UI>().ShowCatShapesButton();
+        userInterface.ShowCatShapesButton();
 
     }
 
@@ -205,42 +244,43 @@ public class GameManager : MonoBehaviour
         }
         Destroy(chosenWisp);
         print("CHOICE " + shapeType);
-        GameObject.Find("Main Camera").GetComponent<MoveCamera>().changePosition();
-        GameObject.Find("Forest").GetComponent<GridManager>().AddNewShape(shapeType, chosenWisp.GetComponent<TileScript>().wispType);
-        GameObject.Find("UI").GetComponent<UI>().HidePondActions();
+        cameraMover.changePosition();
+        gridManager.AddNewShape(shapeType, chosenWisp.GetComponent<TileScript>().wispType);
+        userInterface.HidePondActions();
+        userInterface.ShowArrowsForShapes();
     }
 
     public void TreeTurn()
     {
-        GameObject.Find("Main Camera").GetComponent<MoveCamera>().changePosition();
-        GameObject.Find("Forest").GetComponent<GridManager>().TreeTurn();
+        cameraMover.changePosition();
+        gridManager.TreeTurn();
         if (isCatHidden) StartCoroutine(flipCatLate());
         isCatHidden = false;
-        GameObject.Find("UI").GetComponent<UI>().HidePondActions();
+        userInterface.HidePondActions();
 
     }
 
     IEnumerator flipCatLate()
     {
-        GameObject.Find("UI").GetComponent<UI>().flipCat();
+        userInterface.flipCat();
         yield return new WaitForSeconds(2);
-        StartCoroutine(GameObject.Find("Forest").GetComponent<GridManager>().FlipCatTile());
+        StartCoroutine(gridManager.FlipCatTile());
         
     }
 
     public void CatActionNewWisps()
     {
         isCatHidden = true;
-        GameObject.Find("UI").GetComponent<UI>().flipCat();
-        StartCoroutine(GameObject.Find("Forest").GetComponent<GridManager>().FlipCatTile());
+        userInterface.flipCat();
+        StartCoroutine(gridManager.FlipCatTile());
         StartCoroutine(PondFlipAll());
     }
 
     public void CatActionAllShapes()
     {
         isCatHidden = true;
-        GameObject.Find("UI").GetComponent<UI>().flipCat();
-        StartCoroutine(GameObject.Find("Forest").GetComponent<GridManager>().FlipCatTile());
+        userInterface.flipCat();
+        StartCoroutine(gridManager.FlipCatTile());
         for (int i = 0; i < shapeChoices.Count; ++i)
         {
             shapeChoices[i].GetComponent<ShapeChoice>().Activate();

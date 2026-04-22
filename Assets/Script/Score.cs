@@ -4,11 +4,9 @@ using System.Collections.Generic;
 public class Score : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [HideInInspector]
     public List<List<int>> gridList = new List<List<int>>();
-    [Range(0,1)]
-    [Tooltip("Percent of grid hidden/covered in trees")]
-    public float treesRatio = 0.5f;
-
+    [Header("Scoring Methods")]
     [Tooltip("0 means don't add it to the Score")]
     [Range(0, 5)]
     public int pumpkinsScoreMethodIndex = 1;
@@ -24,11 +22,15 @@ public class Score : MonoBehaviour
     [Tooltip("0 means don't add it to the Score")]
     [Range(0, 5)]
     public int treeScoreMethodIndex = 1;
-    private UI userInterface;
+    [Header("Navigation")]
+    public UI userInterface;
+    [HideInInspector]
     public int myScore = 0;
+
+    //DEBUG:
+    private float treesRatio = 0.5f;
     void Start()
     {
-        userInterface = GameObject.Find("UI").GetComponent<UI>();
         if (gridList.Count == 0) GetRandomGrid();
         PrintGrid();
 
@@ -37,18 +39,6 @@ public class Score : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            GetRandomGrid();
-            PrintGrid();
-        
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && false)
-        {
-            SumUpScore();
-
-        }
 
     }
 
@@ -87,6 +77,11 @@ public class Score : MonoBehaviour
         {
             //WITCHES
             if (methodIndex == 0) return new string[] { "Empty Method", "No points (only Debug)" };
+            if (methodIndex == 1) return new string[] { "Koci Kącik", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona na linii ukośnej z kotem." };
+            if (methodIndex == 2) return new string[] { "Wlazł kotek na płotek", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona w rzędzie lub kolumnie z kotem" };
+            if (methodIndex == 3) return new string[] { "Po nitce do kłębka", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona na jednym z pól wokół kota." };
+            if (methodIndex == 4) return new string[] { "Skośna", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi łączyć się skośnie z kotem, bezpośrednio lub przez inne wiedźmy" };
+            if (methodIndex == 5) return new string[] { "Superpozycja", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi być umieszczona dokładnie dwa pola od kota." };
             else return new string[] { "Uniwersalna", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1." };
 
         }

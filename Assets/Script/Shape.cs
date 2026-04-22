@@ -3,29 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using System.Collections;
+using UnityEngine.Rendering;
+using TMPro;
 
 public class Shape : MonoBehaviour
 {
+    //Prefabs
     public GameObject choiceTilePrefab;
     public GameObject[] tilePrefabs;
+    public GameObject badChoiceTilePrefab;
+
+
     public float distanceBetweenTiles = 0.5f;
     public float spawnHeight = 0.1f;
     public float spawnHeightChoice = 0.05f;
-    public GridManager gridManager;
+    
     private List<List<Vector2>> shapesList = new List<List<Vector2>>();
     private List<Vector2> myShape = new List<Vector2>();
     private List<GameObject> tileList = new List<GameObject > ();
+
     public bool isFinal = false;
     private int ghostIndex = 0;
     private int ghostTypeIndex;
     public bool testing = false;
     public Vector2 startPosition = Vector2.zero;
-    public GameObject badChoiceTilePrefab;
     private bool canBePlacedWhole = false;
+
+    //Navigation
+    public GridManager gridManager;
+    public UI userInterface;
+    public MoveCamera cameraMover;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        gridManager = GameObject.Find("Forest").GetComponent<GridManager>();
         InitializeShapesList();
         //GenerateRandom();
 
@@ -86,7 +97,6 @@ public class Shape : MonoBehaviour
    public  void GenerateFirstTime(int shapeIndex, int WispType)
     {
         InitializeShapesList();
-        gridManager = GameObject.Find("Forest").GetComponent<GridManager>();
         myShape = shapesList[shapeIndex];
         ghostTypeIndex = WispType;
         Generate();
@@ -102,7 +112,7 @@ public class Shape : MonoBehaviour
             GameObject chosenPrefab = choiceTilePrefab;
             if (isFinal) chosenPrefab = NextTile();
             if (i == ghostIndex) chosenPrefab = GetGhostTile();
-            if (!CanBePlacedHere(myShape[i]))
+            if (!CanBePlacedHere(myShape[i]) || !WitchCondtion(i, myShape[i]))
             {
                 chosenPrefab = badChoiceTilePrefab;
                 canBePlacedWhole = false;
@@ -168,6 +178,63 @@ public class Shape : MonoBehaviour
         return true;
     }
 
+    bool WitchCondtion(int tileIndex, Vector2 location)
+    {
+        if (tileIndex != ghostIndex) return true;
+        if (ghostTypeIndex != 2) return true;
+
+        Vector2 witchLocation = location + startPosition;
+        Vector2 catLocation = gridManager.GetCatPosition();
+        int methodIndex = gridManager.myScore.witchScoreMethodIndex;
+
+        //Only Debug (ignore Witch condition)
+        if (methodIndex == 0) return true;
+
+        //"Każda nowa wiedźma musi zostać umieszczona na linii ukośnej z kotem."
+        if (methodIndex == 1) return catLocation.x - catLocation.y == witchLocation.x - witchLocation.y || 
+                catLocation.x + catLocation.y == witchLocation.x + witchLocation.y;
+
+        //"Każda nowa wiedźma musi zostać umieszczona w rzędzie lub kolumnie z kotem" 
+        if (methodIndex == 2) return catLocation.x == witchLocation.x || catLocation.y == witchLocation.y;
+
+        //Każda nowa wiedźma musi zostać umieszczona na jednym z pól wokół kota.
+        if (methodIndex == 3) return Mathf.Abs(catLocation.x - witchLocation.x) <= 1 && Mathf.Abs(catLocation.y - witchLocation.y) <= 1;
+
+        //"Każda nowa wiedźma musi łączyć się skośnie z kotem, bezpośrednio lub przez inne wiedźmy"
+        if (methodIndex == 4)
+        {
+            Queue<Vector2> lazyQ = new Queue<Vector2>();
+            List<Vector2> visited = new List<Vector2>();
+            lazyQ.Enqueue(witchLocation);
+            Vector2[] helpArray = { new Vector2(-1, -1), new Vector2(1, -1), new Vector2(-1, 1), new Vector2(1, 1) };
+            while (lazyQ.Count > 0)
+            {
+                
+                for (int i = 0; i < helpArray.Length; i++)
+                {
+                    int tempX = (int) (lazyQ.Peek().x + helpArray[i].x);
+                    int tempY = (int)(lazyQ.Peek().y + helpArray[i].y);
+                    Vector2 tVector = new Vector2(tempX, tempY);
+                    if (catLocation == tVector) return true;
+                    if (visited.Contains(tVector)) continue;
+                    if (tempX < 0 || tempY < 0) continue;
+                    if (tempX >= gridManager.GetSize().x) continue;
+                    if (tempY >= gridManager.GetSize().y) continue;
+                    if (gridManager.GetTileType(tempX, tempY) == 4) lazyQ.Enqueue(tVector);
+                }
+                visited.Add(lazyQ.Dequeue());
+
+            }
+            return false;
+        }
+
+        //"Każda nowa wiedźma musi być umieszczona dokładnie dwa pola od kota."
+        if (methodIndex == 5) return (Mathf.Abs(catLocation.x - witchLocation.x) == 2 && Mathf.Abs(catLocation.y - witchLocation.y) <= 2) || (Mathf.Abs(catLocation.y - witchLocation.y) == 2 && Mathf.Abs(catLocation.x - witchLocation.x) <= 2);
+
+
+        return false;
+    }
+
     GameObject NextTile()
     {
         return tilePrefabs[Random.Range(0, tilePrefabs.Count())];
@@ -194,6 +261,7 @@ public class Shape : MonoBehaviour
             float x = myShape[i].x;
             myShape[i] = new Vector2(myShape[i].y, -myShape[i].x);
         }
+        Generate();
     }
 
     void RotateLeft()
@@ -203,6 +271,7 @@ public class Shape : MonoBehaviour
             float x = myShape[i].x;
             myShape[i] = new Vector2(-myShape[i].y, myShape[i].x);
         }
+        Generate();
     }
 
     void FlipShape()
@@ -212,11 +281,13 @@ public class Shape : MonoBehaviour
             float x = myShape[i].x;
             myShape[i] = new Vector2(-myShape[i].x, myShape[i].y);
         }
+        Generate();
     }
 
-    void changeGhostIndex()
+    void ChangeGhostIndex()
     {
         ghostIndex = (ghostIndex + 1) % myShape.Count;
+        Generate();
     }
 
     void MoveUp()
@@ -266,7 +337,7 @@ public class Shape : MonoBehaviour
             if (myShape[i].y + newPosition.y > maxY) maxY = (int)myShape[i].y + (int)startPosition.y +1;
         }
 
-        print("minX" + minX + " minY " + minY + " maxX " + maxX + " maxY " + maxY);
+        //print("minX" + minX + " minY " + minY + " maxX " + maxX + " maxY " + maxY);
         //if (maxX - minX > gridManager.maxDimension || maxY - minY > gridManager.maxDimension) return false;
         //Nie mam na to teraz pomysłu xd
         return true;
@@ -315,6 +386,7 @@ public class Shape : MonoBehaviour
         }
 
         //gridManager.printInnerGrid();
+        userInterface.HideArrows();
         StartCoroutine(WaitMoveCamera());
         
     }
@@ -322,58 +394,112 @@ public class Shape : MonoBehaviour
     IEnumerator WaitMoveCamera()
     {
         yield return new WaitForSeconds(1);
-        GameObject.Find("Main Camera").GetComponent<MoveCamera>().changePosition();
+        cameraMover.changePosition();
         Destroy(gameObject);
+    }
+
+    public void ButtonManager(int i )
+    {
+
+        //0 LEFT
+        if (i == 0)
+        {
+            MoveLeft();
+        }
+
+        //1 RIGHT
+        if (i == 1)
+        {
+            MoveRight();
+        }
+
+        //2 UP
+        if (i == 2)
+        {
+            MoveUp();
+        }
+
+        //3 DOWN
+        if (i == 3)
+        {
+            MoveDown();
+        }
+
+        //4 ENTER
+        if (i == 4)
+        {
+            if (canBePlacedWhole) MakeFinal();
+        }
+
+        //5 ROTATE LEFT
+        if (i == 5)
+        {
+            RotateLeft();
+        }
+
+        //6 ROTATE RIGHT
+        if (i == 6)
+        {
+            RotateRight();
+        }
+
+        //7 FLIP HORIZONTALLY
+        if (i == 7)
+        {
+            FlipShape();
+        }
+
+        //8 CHANGE WISP POSITION
+        if (i == 8)
+        {
+            ChangeGhostIndex();
+        }
     }
 
 
  
 
         // Update is called once per frame
-        void Update()
+    void Update()
     {
         if (isFinal) return;
-        //if (Input.GetKeyDown(KeyCode.S)) GenerateRandom();
+
         if (Input.GetKeyDown(KeyCode.E))
         {
-            RotateRight();
-            Generate();
+            ButtonManager(6);
+
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            RotateLeft();
-            Generate();
+            ButtonManager(5);
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            FlipShape();
-            Generate();
-            gridManager.ExtendGrid(0, 0);
+            ButtonManager(7);
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (canBePlacedWhole) MakeFinal();
+            ButtonManager(4);
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            changeGhostIndex();
-            Generate();
+            ButtonManager(8);
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            MoveUp();
+            ButtonManager(2);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            MoveDown();
+            ButtonManager(3);
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            MoveLeft();
+            ButtonManager(0);
         }
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            MoveRight();
+            ButtonManager(1);
         }
 
 

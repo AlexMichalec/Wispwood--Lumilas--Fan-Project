@@ -8,6 +8,8 @@ public class ShapeChoice : MonoBehaviour
     public int shapeType;
     public Material standardChoiceMaterial;
     public Material mouseEnterMaterial;
+    public GameManager gameManager;
+
     void Start()
     {
         
@@ -27,7 +29,7 @@ public class ShapeChoice : MonoBehaviour
     private void OnMouseDown()
     {
         if (!isActive) return;
-        GameObject.Find("GameManager").GetComponent<GameManager>().ChooseShape(shapeType);
+        gameManager.ChooseShape(shapeType);
     }
 
     private void OnMouseExit()
@@ -46,5 +48,6 @@ public class ShapeChoice : MonoBehaviour
     {
         isActive = false;
         choiceMarker.SetActive(false);
+        choiceMarker.GetComponent<Renderer>().material = standardChoiceMaterial;
     }
 }

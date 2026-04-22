@@ -6,37 +6,50 @@ using UnityEngine.Rendering;
 
 public class GridManager : MonoBehaviour
 {
-    public GameObject[] tilePrefabs;
-    [SerializeField]
-    private GameObject catTilePrefab;
-    private GameObject catTile;
+    [Header("General")]
     public int maxDimension = 4;
     public float distanceBetweenTiles = 0.4f;
     public float spawnHeight = 0.1f;
-    private List<List<int>> gridList = new List<List<int>>();
-    private List<List<GameObject>> gridList2 = new List<List<GameObject>>();
-    public bool useUp = true;
-    public bool useDown = true;
-    public bool useLeft = true;
-    public bool useRight = true;
-    private List<Vector2> possiblePlacesToAddTile = new List<Vector2>();
-    public GameObject choiceTilePrefab;
-    private GameObject choiceTile;
-    public int choiceIndex = 0;
-    private Vector2 nearChoiceLocation;
-    public bool useMouse = false;
-    public Vector3 MouseePos;
-    private float moveCenter = 0.02f;
-    public GameObject shapePrefab;
-    private GameObject currentShape;
-    public GameObject scoreNode;
-    public float flipForce;
-    public float rotateForce;
+
+    [Header("Cat Flipping")]
     public float flipHeight;
     public float flipTime;
-    private bool flipping = false;
-    private int treeTurnCounter = 0;
+
+    [Header("Prefabs")]
+    public GameObject[] tilePrefabs;
+    public GameObject catTilePrefab;
+    public GameObject choiceTilePrefab;
+    public GameObject shapePrefab;
     
+    [Header("Navigation")]
+    public UI userInterface;
+    public MoveCamera cameraMover;
+    public Score myScore;
+
+    //Grids
+    private List<List<int>> gridList = new List<List<int>>();
+    private List<List<GameObject>> gridList2 = new List<List<GameObject>>();
+
+    //Lists
+    private List<Vector2> possiblePlacesToAddTile = new List<Vector2>();
+
+    //Objects
+    private GameObject catTile;
+    private GameObject choiceTile;
+    private GameObject currentShape;
+
+    //Variables
+    private int treeTurnCounter = 0;
+    private int choiceIndex = 0;
+
+    //Does it have to be global?
+    private Vector2 nearChoiceLocation;
+    private float moveCenter = 0.02f;
+
+    //Old versions
+    private float flipForce;
+    private float rotateForce;
+
 
     // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
     void Start()
@@ -45,7 +58,7 @@ public class GridManager : MonoBehaviour
         moveCenter = distanceBetweenTiles / 20.0f;
         Debug.Log("MC " + moveCenter);
         StartCoroutine(lateUpdateChoiceTile());
-        
+
     }
 
     public void resetCat()
@@ -62,23 +75,22 @@ public class GridManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         updateChoiceTile();
 
-        
+
     }
 
     public void SubmitGrid()
     {
-        Score myScore = scoreNode.GetComponent<Score>();
         myScore.gridList = gridList;
         myScore.SumUpScore();
-        
+
     }
 
     void InitializeGrid()
     {
         gridList.Add(new List<int> { 6 });
-        Vector3 catPosition = new Vector3(transform.position.x,spawnHeight,transform.position.z);
+        Vector3 catPosition = new Vector3(transform.position.x, spawnHeight, transform.position.z);
         catTile = Instantiate(catTilePrefab, catPosition, new Quaternion(0, 180, 0, 0));
-        gridList2.Add(new List<GameObject> { catTile});
+        gridList2.Add(new List<GameObject> { catTile });
     }
 
     void addTile()
@@ -86,7 +98,7 @@ public class GridManager : MonoBehaviour
         addRandomTile();
     }
 
- 
+
 
     void setNextChoice()
     {
@@ -96,11 +108,11 @@ public class GridManager : MonoBehaviour
         return;
     }
 
-    void setPreviousChoice()
+    void SetPreviousChoice()
     {
         if (IsFull()) return;
-        choiceIndex = choiceIndex -1;
-        if (choiceIndex < 0) choiceIndex = possiblePlacesToAddTile.Count-1;
+        choiceIndex = choiceIndex - 1;
+        if (choiceIndex < 0) choiceIndex = possiblePlacesToAddTile.Count - 1;
         updateChoiceTile();
         return;
     }
@@ -130,7 +142,7 @@ public class GridManager : MonoBehaviour
             if (choiceIndex < 0) choiceIndex = possiblePlacesToAddTile.Count - 1;
             counter++;
         }
-        
+
         updateChoiceTile();
         return;
     }
@@ -175,7 +187,7 @@ public class GridManager : MonoBehaviour
             return;
         }
         //RIGHT
-        if (pt_y<0)
+        if (pt_y < 0)
         {
             GameObject otherTile = gridList2[pt_x][pt_y + 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
@@ -186,14 +198,14 @@ public class GridManager : MonoBehaviour
         //UP (względtem tego u góry)
         if (pt_x > 0 && gridList[pt_x - 1][pt_y] > 0)
         {
-            GameObject otherTile = gridList2[pt_x-1][pt_y];
+            GameObject otherTile = gridList2[pt_x - 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x + distanceBetweenTiles,
-                0.01f,otherTile.transform.position.z);
+                0.01f, otherTile.transform.position.z);
             nearChoiceLocation = new Vector2(pt_x - 1, pt_y);
             return;
         }
         //DOWN
-        if (pt_x < gridList.Count-1 && gridList[pt_x + 1][pt_y] > 0)
+        if (pt_x < gridList.Count - 1 && gridList[pt_x + 1][pt_y] > 0)
         {
             GameObject otherTile = gridList2[pt_x + 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x - distanceBetweenTiles,
@@ -202,9 +214,9 @@ public class GridManager : MonoBehaviour
             return;
         }
         //LEFT
-        if (pt_y > 0 && gridList[pt_x][pt_y-1] > 0)
+        if (pt_y > 0 && gridList[pt_x][pt_y - 1] > 0)
         {
-            GameObject otherTile = gridList2[pt_x][pt_y-1];
+            GameObject otherTile = gridList2[pt_x][pt_y - 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
                 0.01f, otherTile.transform.position.z + distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y - 1);
@@ -213,7 +225,7 @@ public class GridManager : MonoBehaviour
         //RIGHT
         if (pt_y < gridList[0].Count && gridList[pt_x][pt_y + 1] > 0)
         {
-            GameObject otherTile = gridList2[pt_x][pt_y+1];
+            GameObject otherTile = gridList2[pt_x][pt_y + 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
                 0.01f, otherTile.transform.position.z - distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y + 1);
@@ -232,14 +244,14 @@ public class GridManager : MonoBehaviour
             for (int j = 0; j < gridList[i].Count; j++)
             {
                 if (gridList[i][j] == 0) continue;
-                if (CanAddLeft(i,j) && !possiblePlacesToAddTile.Contains(new Vector2(i,j-1))) 
-                    possiblePlacesToAddTile.Add(new Vector2(i,j-1));
+                if (CanAddLeft(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i, j - 1)))
+                    possiblePlacesToAddTile.Add(new Vector2(i, j - 1));
                 if (CanAddRight(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i, j + 1)))
                     possiblePlacesToAddTile.Add(new Vector2(i, j + 1));
-                if (CanAddUp(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i-1, j)))
-                    possiblePlacesToAddTile.Add(new Vector2(i-1, j));
-                if (CanAddDown(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i+1, j)))
-                    possiblePlacesToAddTile.Add(new Vector2(i+1, j));
+                if (CanAddUp(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i - 1, j)))
+                    possiblePlacesToAddTile.Add(new Vector2(i - 1, j));
+                if (CanAddDown(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i + 1, j)))
+                    possiblePlacesToAddTile.Add(new Vector2(i + 1, j));
 
             }
         }
@@ -279,9 +291,9 @@ public class GridManager : MonoBehaviour
         if (gridList.Count < maxDimension || gridList[0].Count < maxDimension) return false;
         for (int i = 0; i < gridList.Count; ++i)
         {
-            for (int j = 0; j< gridList[i].Count; ++j)
+            for (int j = 0; j < gridList[i].Count; ++j)
             {
-                if (gridList[i][j] == 0) return false; 
+                if (gridList[i][j] == 0) return false;
             }
         }
         Debug.Log("Is Full :o");
@@ -293,10 +305,10 @@ public class GridManager : MonoBehaviour
     {
         if (IsFull()) return;
         if (choiceTile == null) return;
-        if (tileIndex<0) tileIndex = Random.Range(0, 4);
+        if (tileIndex < 0) tileIndex = Random.Range(0, 4);
         int gridTileIndex = 1;
         GameObject newTile = Instantiate(tilePrefabs[tileIndex]);
-        newTile.transform.rotation = Quaternion.Euler(0,0,180);
+        newTile.transform.rotation = Quaternion.Euler(0, 0, 180);
         Vector2 chosenPlace = possiblePlacesToAddTile[choiceIndex];
         AddNewTile(chosenPlace, newTile, gridTileIndex, nearChoiceLocation);
 
@@ -305,7 +317,7 @@ public class GridManager : MonoBehaviour
     void addRandomTile()
     {
         if (IsFull()) return;
-        int tileIndex = Random.Range(0,4);
+        int tileIndex = Random.Range(0, 4);
         GameObject newTile = Instantiate(tilePrefabs[tileIndex]);
         bool isTree = Random.value > 0.5;
         Vector2 usedTile = new Vector2();
@@ -325,13 +337,13 @@ public class GridManager : MonoBehaviour
             {
                 x = Random.Range(0, gridList.Count);
                 y = Random.Range(0, gridList[x].Count);
-  
+
             }
             //2. sprawdź czy ma wolne miejsce na kafelek
-            if (useLeft && CanAddLeft(x, y)) potentialPlaces.Add(new Vector2(x, y-1));
-            if (useRight && CanAddRight(x, y)) potentialPlaces.Add(new Vector2(x, y+1));
-            if (useUp && CanAddUp(x, y)) potentialPlaces.Add(new Vector2(x-1, y));
-            if (useDown && CanAddDown(x, y)) potentialPlaces.Add(new Vector2(x+1, y));
+            if (CanAddLeft(x, y)) potentialPlaces.Add(new Vector2(x, y - 1));
+            if (CanAddRight(x, y)) potentialPlaces.Add(new Vector2(x, y + 1));
+            if (CanAddUp(x, y)) potentialPlaces.Add(new Vector2(x - 1, y));
+            if (CanAddDown(x, y)) potentialPlaces.Add(new Vector2(x + 1, y));
             usedTile = new Vector2(x, y);
             // jeśli nie wróć do 1.
         }
@@ -384,8 +396,8 @@ public class GridManager : MonoBehaviour
             gridList.Insert(0, tempList);
             gridList2.Insert(0, tempList2);
             chosenPlace = new Vector2(chosenPlace.x + 1, chosenPlace.y);
-            usedTile = new Vector2(usedTile.x+1, usedTile.y);
-            StartCoroutine(CenterGrid(moveCenter,0));
+            usedTile = new Vector2(usedTile.x + 1, usedTile.y);
+            StartCoroutine(CenterGrid(moveCenter, 0));
         }
         //w dół
         if (chosenPlace.x >= gridList.Count)
@@ -411,8 +423,8 @@ public class GridManager : MonoBehaviour
                 gridList[i].Insert(0, 0);
                 gridList2[i].Insert(0, null);
             }
-            chosenPlace = new Vector2(chosenPlace.x, chosenPlace.y+1);
-            usedTile = new Vector2(usedTile.x, usedTile.y+1);
+            chosenPlace = new Vector2(chosenPlace.x, chosenPlace.y + 1);
+            usedTile = new Vector2(usedTile.x, usedTile.y + 1);
             StartCoroutine(CenterGrid(0, moveCenter));
         }
         //w prawo
@@ -451,28 +463,28 @@ public class GridManager : MonoBehaviour
 
     bool CanAddUp(int x, int y)
     {
-        
+
         return (x >= 1 && gridList[x - 1][y] == 0) || (x == 0) && gridList.Count < maxDimension;
     }
 
     bool CanAddRight(int x, int y)
     {
-        return (y < gridList[0].Count - 1 && gridList[x][y+1] == 0) || (y == gridList[0].Count-1) && gridList[0].Count < maxDimension;
+        return (y < gridList[0].Count - 1 && gridList[x][y + 1] == 0) || (y == gridList[0].Count - 1) && gridList[0].Count < maxDimension;
     }
 
     bool CanAddDown(int x, int y)
     {
-        return (x < gridList.Count-1 && gridList[x+1][y] == 0) || (x == gridList.Count-1) && gridList.Count < maxDimension;
+        return (x < gridList.Count - 1 && gridList[x + 1][y] == 0) || (x == gridList.Count - 1) && gridList.Count < maxDimension;
     }
 
-    IEnumerator CenterGrid(float x, float y) 
+    IEnumerator CenterGrid(float x, float y)
     {
         yield return new WaitForSeconds(0.2f);
         for (int t = 0; t < 10; t++)
         {
-            for(int i = 0; i < gridList2.Count; i++)
+            for (int i = 0; i < gridList2.Count; i++)
             {
-                for(int j=0; j < gridList2[i].Count; j++)
+                for (int j = 0; j < gridList2[i].Count; j++)
                 {
                     if (gridList2[i][j] == null) continue;
                     gridList2[i][j].transform.position += new Vector3(x, 0, y);
@@ -481,7 +493,7 @@ public class GridManager : MonoBehaviour
             }
             yield return new WaitForSeconds(0.05f);
         }
-        
+
     }
 
     public Vector2 GetSize()
@@ -491,7 +503,7 @@ public class GridManager : MonoBehaviour
 
     public void ExtendGrid(int x, int y)
     {
-        StartCoroutine(CenterGrid(-x * moveCenter, -y *moveCenter));
+        StartCoroutine(CenterGrid(-x * moveCenter, -y * moveCenter));
         // Rozszerzanie matrycy     <-można o więcej niż 1?
         //w górę
         while (x < 0)
@@ -509,7 +521,7 @@ public class GridManager : MonoBehaviour
             x++;
         }
         //w dół
-        while (x >0)
+        while (x > 0)
         {
             List<int> tempList = new List<int>();
             List<GameObject> tempList2 = new List<GameObject>();
@@ -535,7 +547,7 @@ public class GridManager : MonoBehaviour
             //StartCoroutine(CenterGrid(0, moveCenter));
         }
         //w prawo
-        while (y >0)
+        while (y > 0)
         {
             for (int i = 0; i < gridList.Count; i++)
             {
@@ -571,9 +583,9 @@ public class GridManager : MonoBehaviour
 
     public void Deforest()
     {
-        for (int i =0; i < gridList.Count; ++i)
+        for (int i = 0; i < gridList.Count; ++i)
         {
-            for (int j = 0; j <gridList[i].Count; j++)
+            for (int j = 0; j < gridList[i].Count; j++)
             {
                 if (gridList[i][j] == 1)
                 {
@@ -584,10 +596,66 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void ButtonInputManager(int i)
+    {
+        //If we're adding a shape currently
+        if (currentShape != null) 
+        {
+            currentShape.GetComponent<Shape>().ButtonManager(i);
+            return;
+        }
+
+        //If already added three trees during current Tree Turn
+        if (treeTurnCounter >= 3) return;
+
+        //Do we need that?
+        PreparePossiblePlaces();
+
+        //0 LEFT
+        if (i == 0)
+        {
+            PreparePossiblePlaces();
+            SetPreviousChoice();
+        }
+
+        //1 RIGHT
+        if (i == 1)
+        {
+            setNextChoice();
+        }
+
+        //2 UP
+        if (i == 2)
+        {
+            setUpChoice();
+        }
+
+        //3 DOWN
+        if (i == 3)
+        {
+            setDownChoice();
+        }
+
+        //4 ENTER
+        if (i == 4)
+        {
+            treeTurnCounter++;
+            userInterface.TreeCounterUp();
+            AddTree();
+            Destroy(choiceTile);
+            printInnerGrid();
+            if (treeTurnCounter < 3)
+            {
+                PreparePossiblePlaces();
+                setNextChoice();
+            }
+        }
+    }
+
     IEnumerator DisappearTree(GameObject tree)
     {
         Vector3 stepVector = tree.transform.localScale / 20;
-        for (int i = 1; i<20; ++i)
+        for (int i = 1; i < 20; ++i)
         {
             yield return new WaitForSeconds(0.05f);
             tree.transform.localScale -= stepVector;
@@ -600,23 +668,23 @@ public class GridManager : MonoBehaviour
         catTile.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY;
         catTile.GetComponent<Rigidbody>().AddForce(Vector3.up * flipForce);
         catTile.GetComponent<Rigidbody>().AddTorque(Vector3.left * rotateForce);
-       
+
 
         yield return new WaitForSeconds(0.5f);
         catTile.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        flipping = false;
-        
+
+
     }
 
     public IEnumerator FlipCatTile()
     {
         Vector3 oldPos = catTile.transform.position;
         Quaternion startRotation = catTile.transform.rotation;
-        Quaternion endRotation = catTile.transform.rotation * Quaternion.Euler(180,0,0);
+        Quaternion endRotation = catTile.transform.rotation * Quaternion.Euler(180, 0, 0);
         float counter = 0;
-        while(counter < flipTime / 2)
+        while (counter < flipTime / 2)
         {
-            catTile.transform.position = Vector3.Lerp(oldPos, oldPos + new Vector3(0, flipHeight, 0), counter / (flipTime/2));
+            catTile.transform.position = Vector3.Lerp(oldPos, oldPos + new Vector3(0, flipHeight, 0), counter / (flipTime / 2));
             catTile.transform.rotation = Quaternion.Lerp(startRotation, endRotation, counter / flipTime);
             counter += Time.deltaTime;
             yield return null;
@@ -624,15 +692,14 @@ public class GridManager : MonoBehaviour
         Vector3 newPos = catTile.transform.position;
         while (counter < flipTime)
         {
-            catTile.transform.position = Vector3.Lerp(oldPos + new Vector3(0, flipHeight, 0), oldPos, (counter - flipTime/2) / (flipTime/2));
+            catTile.transform.position = Vector3.Lerp(oldPos + new Vector3(0, flipHeight, 0), oldPos, (counter - flipTime / 2) / (flipTime / 2));
             catTile.transform.rotation = Quaternion.Lerp(startRotation, endRotation, counter / flipTime);
             counter += Time.deltaTime;
             yield return null;
         }
         catTile.transform.rotation = endRotation;
         catTile.transform.position = oldPos;
-        flipping = false;
-        //GameObject.Find("UI").GetComponent<UI>().flipCat();
+        //userInterface.flipCat();
 
     }
 
@@ -642,8 +709,12 @@ public class GridManager : MonoBehaviour
         Vector3 catTilePosition = gridList2[(int)catPosition.x][(int)catPosition.y].transform.position;
         Vector3 shapePosition = catTilePosition;
         GameObject newShape = Instantiate(shapePrefab, shapePosition, Quaternion.identity);
-        newShape.GetComponent<Shape>().startPosition = catPosition;
-        newShape.GetComponent<Shape>().GenerateFirstTime(shapeType, wispType);
+        Shape shapeScript = newShape.GetComponent<Shape>();
+        shapeScript.userInterface = userInterface;
+        shapeScript.cameraMover = cameraMover;
+        shapeScript.gridManager = this;
+        shapeScript.startPosition = catPosition;
+        shapeScript.GenerateFirstTime(shapeType, wispType);
         currentShape = newShape;
         Destroy(choiceTile);
         print("FINISH");
@@ -656,98 +727,51 @@ public class GridManager : MonoBehaviour
         setNextChoice();
     }
 
+    public Vector2 GetCatPosition()
+    {
+        for (int i = 0; i < gridList2.Count; i++) {
+            for (int j = 0; j < gridList2[i].Count; j++)
+            {
+                if (gridList2[i][j] == catTile) return new Vector2(i,j);
+            }
+                
+        }
+        return new Vector2();
+    }
+
+    public int GetTileType(int x, int y)
+    {
+        return gridList[x][y];
+    }
+
     void Update()
     {
         if (treeTurnCounter >= 3) return;
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (currentShape == null)
-            {
-                Vector2 catPosition = FindCatTile();
-                Vector3 catTilePosition = gridList2[(int)catPosition.x][(int)catPosition.y].transform.position;
-                Vector3 shapePosition = catTilePosition;
-                GameObject newShape = Instantiate(shapePrefab, shapePosition, Quaternion.identity);
-                newShape.GetComponent<Shape>().startPosition = catPosition;
-                currentShape = newShape;
-                Destroy(choiceTile);
-            }
+        if (currentShape != null) return;
 
-            
-            
-        }
-        if (currentShape!= null) return;
-        
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            Destroy(choiceTile);
-            choiceIndex = 0;
-            addRandomTile();
+            ButtonInputManager(0);
         }
-        if (useMouse)
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            MouseePos = Input.mousePosition;
+            ButtonInputManager(1);
         }
-
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-
-            PreparePossiblePlaces();
-            string result = "Result: \n";
-            for (int i = 0; i < possiblePlacesToAddTile.Count; i++) {
-                result += "(" + possiblePlacesToAddTile[i].x + ", " + possiblePlacesToAddTile[i].y + "), ";
-                   
-            }
-            Debug.Log(result);
+            ButtonInputManager(2);
         }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            PreparePossiblePlaces();
-            setPreviousChoice();
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            PreparePossiblePlaces();
-            setNextChoice();
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            PreparePossiblePlaces();
-            setUpChoice();
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            PreparePossiblePlaces();
-            setDownChoice();
+            ButtonInputManager(3);
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            treeTurnCounter++;
-            GameObject.Find("UI").GetComponent<UI>().TreeCounterUp();
-            AddTree();
-            Destroy(choiceTile);
-            printInnerGrid();
-            if (treeTurnCounter < 3)
-            {
-                PreparePossiblePlaces();
-                setNextChoice();
-            }
+            ButtonInputManager(4);
             
         }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Deforest();
-
-        }
-        if (Input.GetKeyDown(KeyCode.K) && !flipping)
-        {
-            flipping = true;
-            StartCoroutine(FlipCatTile());
-          
 
 
-        }
 
     }
 }
