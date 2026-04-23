@@ -58,10 +58,10 @@ public class Score : MonoBehaviour
             //PUMPKINS
             if (methodIndex == 0) return new string[] { "Empty Method","No points (only Debug)" };
             if (methodIndex == 1) return new string[] { "Dynioku", "Policz Dynie znajdujące się w rzędzie i kolumnie bez innych Dyń.", "(1,4), (2,9), (3,15), (4,22) (5,30), (6,40)" };
-            if (methodIndex == 2) return new string[] { "Dyniowa Latarnia", "Policz Dynie wokół których nie ma innych Dyni.", "(1,4), (2,9), (3,15), (4,22) (5,30) + 8 za każdą kolejną" };
-            if (methodIndex == 3) return new string[] { "Dynia z parą", "Policz pary Dyń, obok których nie ma innych dyni.", "(1,11), (2,23), (3,37) + 14 za każdą kolejną parę" };
-            if (methodIndex == 4) return new string[] { "Not Ready", "Not Ready Yet" };
-            if (methodIndex == 5) return new string[] { "Not Ready", "Not Ready Yet"}; ;
+            if (methodIndex == 2) return new string[] { "Dyniowa Latarnia", "Policz Dynie wokół których nie ma innych Dyni.", "(1,4), (2,9), (3,15), (4,22), (5,30) + 8 za każdą kolejną" };
+            if (methodIndex == 3) return new string[] { "Dynia z parą", "Policz pary Dyń, obok których nie ma innych Dyni.", "(1,11), (2,23), (3,37) + 14 za każdą kolejną parę" };
+            if (methodIndex == 4) return new string[] { "Bez dyni ani rusz", "Policz grupy duszków z conajmniej jedną Dynią.", "(1,4), (2,9), (3,15), (4,22), (5,30) + 8 za każdą kolejną" };
+            if (methodIndex == 5) return new string[] { "Pokrzyżowane plany", "Policz Dynie, które nie leża na linii ukośnej z innymi Dyniami", "(1,4), (2,9), (3,15), (4,22), (5,30), (6, 39)"};
         }
         if (wispType == 3)
         {
@@ -80,7 +80,7 @@ public class Score : MonoBehaviour
             if (methodIndex == 1) return new string[] { "Koci Kącik", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona na linii ukośnej z kotem." };
             if (methodIndex == 2) return new string[] { "Wlazł kotek na płotek", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona w rzędzie lub kolumnie z kotem" };
             if (methodIndex == 3) return new string[] { "Po nitce do kłębka", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi zostać umieszczona na jednym z pól wokół kota." };
-            if (methodIndex == 4) return new string[] { "Skośna", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi łączyć się skośnie z kotem, bezpośrednio lub przez inne wiedźmy" };
+            if (methodIndex == 4) return new string[] { "Miaucaby", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi łączyć się skośnie z kotem, bezpośrednio lub przez inne wiedźmy" };
             if (methodIndex == 5) return new string[] { "Superpozycja", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1.", "Każda nowa wiedźma musi być umieszczona dokładnie dwa pola od kota." };
             else return new string[] { "Uniwersalna", "18p za każde 3 wiedźmy, 10p/4p za pozostałe 2/1." };
 
@@ -158,6 +158,8 @@ public class Score : MonoBehaviour
         if (pumpkinsScoreMethodIndex == 1) subScore = ScorePumpkinsSudoku();
         if (pumpkinsScoreMethodIndex == 2) subScore = ScorePumpkinsLantern();
         if (pumpkinsScoreMethodIndex == 3) subScore = ScorePumpkinsPairs();
+        if (pumpkinsScoreMethodIndex == 4) subScore = ScorePumpkinsGroups();
+        if (pumpkinsScoreMethodIndex == 5) subScore = ScorePumpkinsDiagonal();
         print("Pumpkins score: " + subScore);
         return subScore;
     }
@@ -316,6 +318,101 @@ public class Score : MonoBehaviour
         else result = 37 + 14 * (counter - 3);
         return result;
     }
+
+    //Bez Dynii ani rusz
+    //Policz grupy duszków z conajmniej jedną Dynią
+    //1-4, 2-9, 3-15, 4-22, 5-30, +8 za każdą kolejną
+    int ScorePumpkinsGroups()
+    {
+        int result = 0;
+        int groupCount = 0;
+        int[] scoreArray = { 0, 4, 9, 15, 22, 30 };
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        List<Vector2Int> visited = new List<Vector2Int>();
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for (int j=0; j < gridList[i].Count; ++j)
+            {
+                if (gridList[i][j] == 2 && !visited.Contains(new Vector2Int(i,j)))
+                {
+                    groupCount++;
+                    queue.Enqueue(new Vector2Int(i, j));
+                    while (queue.Count > 0)
+                    {
+                        int x = queue.Peek().x;
+                        int y = queue.Peek().y;
+
+                        if (visited.Contains(new Vector2Int(x, y)))
+                        {
+                            queue.Dequeue();
+                            continue;
+                        }
+
+                        if (x > 0 && !queue.Contains(new Vector2Int(x - 1, y))) queue.Enqueue(new Vector2Int(x-1, y));
+                        if (y > 0 && !queue.Contains(new Vector2Int(x, y - 1))) queue.Enqueue(new Vector2Int(x, y-1));
+                        if (x < gridList.Count - 1 && !queue.Contains(new Vector2Int(x + 1, y))) queue.Enqueue(new Vector2Int(x + 1, y));
+                        if (y < gridList[x].Count-1 && !queue.Contains(new Vector2Int(x, y + 1))) queue.Enqueue(new Vector2Int(x, y + 1));
+
+                        visited.Add(queue.Dequeue());
+                    }
+                }
+            }
+        }
+        result = scoreArray[Mathf.Min(groupCount, scoreArray.Length - 1)];
+        if (groupCount >= scoreArray.Length) result += (groupCount - (scoreArray.Length - 1) * 8);
+
+        return result;
+    }
+
+    //Pokrzyżowane plany
+    //Policz Dynie, które nie leżą na ukośnej linii z żadną inną Dynią
+    //1-4, 2-9, 3-15, 4-22, 5-30, +8 za każdą kolejną
+    int ScorePumpkinsDiagonal()
+    {
+        int result = 0;
+        int[] scoreArray = { 0, 4, 9, 15, 22, 30, 39 };
+        int pumpkinCounter = 0;
+
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            for (int j = 0; j < gridList[i].Count; ++j)
+            {
+                if (gridList[i][j] == 2)
+                {
+                    bool isOnlyOne = true;
+                    //Left Up
+                    for (int k = 1; i-k >=0 && j-k>=0; k++)
+                    {
+                        if (gridList[i - k][j - k] == 2) isOnlyOne = false;
+                    }
+
+                    //Right Up
+                    for (int k = 1; i - k >= 0 && j + k < gridList[i-k].Count; k++)
+                    {
+                        if (gridList[i - k][j + k] == 2) isOnlyOne = false;
+                    }
+
+                    //Left Down
+                    for (int k = 1; i + k < gridList.Count && j - k >= 0; k++)
+                    {
+                        if (gridList[i + k][j - k] == 2) isOnlyOne = false;
+                    }
+
+                    //Right Down
+                    for (int k = 1; i + k < gridList.Count && j + k < gridList[i+k].Count; k++)
+                    {
+                        if (gridList[i + k][j + k] == 2) isOnlyOne = false;
+                    }
+
+                    if (isOnlyOne) pumpkinCounter++;
+                }
+            }
+        }
+
+        result = scoreArray[pumpkinCounter];
+        return result;
+    }
+
 
     void GetRandomGrid()
     {
@@ -488,8 +585,8 @@ public class Score : MonoBehaviour
                     List<int> tempList2 = new List<int>();
                     for (int k = 0; k < gridList.Count; ++k)
                     { 
-                        if (gridList[k][j] > 1 && gridList[k][j] < 6 && !tempList1.Contains(gridList[i + k][j])) tempList1.Add(gridList[i + k][j]);
-                        if (gridList[i][k] > 1 && gridList[i][k] < 6 && !tempList2.Contains(gridList[i][j + k])) tempList2.Add(gridList[i][j + k]);
+                        if (gridList[k][j] > 1 && gridList[k][j] < 6 && !tempList1.Contains(gridList[k][j])) tempList1.Add(gridList[k][j]);
+                        if (gridList[i][k] > 1 && gridList[i][k] < 6 && !tempList2.Contains(gridList[i][k])) tempList2.Add(gridList[i][k]);
                     }
                     result += Mathf.Max(tempList1.Count, tempList2.Count) * 2;
                 }

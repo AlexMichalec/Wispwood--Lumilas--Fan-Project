@@ -29,6 +29,7 @@ public class UI : MonoBehaviour
     public TextMeshProUGUI catIsHiddenText;
     public TextMeshProUGUI topText;
     public GameObject nextRoundButton;
+    public TextMeshProUGUI youCanMoveCatText;
     public int round = 4;
 
     [Header("Pond - UI")]
@@ -44,10 +45,12 @@ public class UI : MonoBehaviour
     public TextMeshProUGUI treeCounter;
     private int treeCounterInt = 0;
 
+
     [Header("Navigation")]
     public GameManager gameManager;
     public GridManager gridManager;
     public Score scoreManager;
+    public MoveCamera cameraMover;
 
 
     void Start()
@@ -60,6 +63,7 @@ public class UI : MonoBehaviour
         {
             StepOne.SetActive(true);
             MenuPanel.SetActive(true);
+            cameraMover.changePosition();
         }
         
        // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
@@ -77,6 +81,7 @@ public class UI : MonoBehaviour
         CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
         CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index2];
         gridManager.resetCat();
+        gameManager.StartGame();
     }
 
     void InitializeScoreOptions()
@@ -219,6 +224,12 @@ public class UI : MonoBehaviour
         CatActionWispsButton.SetActive(false);
         CatActionsShapesButton.SetActive(true);
     }
+    public void ShowArrows()
+    {
+        ArrowButtons.SetActive(true);
+        ArrowForShapesButtons.SetActive(false);
+    }
+
 
     public void HideArrows()
     {
@@ -231,6 +242,20 @@ public class UI : MonoBehaviour
         ArrowForShapesButtons.SetActive(true);
     }
 
+    public void ShowYouCanMoveCat()
+    {
+        youCanMoveCatText.gameObject.SetActive(true);
+    }
+
+    public void HideYouCanMoveCat()
+    {
+        youCanMoveCatText.gameObject.SetActive(false);
+    }
+
+    public void HideDealNewWisps()
+    {
+        DealNewWispsButton.SetActive(false);
+    }
 
 
 }

@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
     public int maxDimension = 4;
     public float distanceBetweenTiles = 0.4f;
     public float spawnHeight = 0.1f;
+    public bool movingCat = false;
 
     [Header("Cat Flipping")]
     public float flipHeight;
@@ -25,6 +26,7 @@ public class GridManager : MonoBehaviour
     public UI userInterface;
     public MoveCamera cameraMover;
     public Score myScore;
+    public GameManager gameManager;
 
     //Grids
     private List<List<int>> gridList = new List<List<int>>();
@@ -37,10 +39,13 @@ public class GridManager : MonoBehaviour
     private GameObject catTile;
     private GameObject choiceTile;
     private GameObject currentShape;
+    private Vector2Int catLocation = new Vector2Int(-1,-1);
+    private bool isCatJumping = false;
 
     //Variables
     private int treeTurnCounter = 0;
     private int choiceIndex = 0;
+    
 
     //Does it have to be global?
     private Vector2 nearChoiceLocation;
@@ -286,7 +291,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    bool IsFull()
+    public bool IsFull()
     {
         if (gridList.Count < maxDimension || gridList[0].Count < maxDimension) return false;
         for (int i = 0; i < gridList.Count; ++i)
@@ -605,6 +610,12 @@ public class GridManager : MonoBehaviour
             return;
         }
 
+        if (movingCat)
+        {
+            CatInputManager(i);
+            return;
+        }
+
         //If already added three trees during current Tree Turn
         if (treeTurnCounter >= 3) return;
 
@@ -652,13 +663,167 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    void CatInputManager(int i)
+    {
+        
+        if (isCatJumping) return;
+        if (choiceTile != null) Destroy(choiceTile);
+        if (true || catLocation.x == -1 || gridList[catLocation.x][catLocation.y] != 6)
+        {
+            for (int j = 0; j < gridList.Count; j++)
+            {
+                for (int k =0; k < gridList[j].Count; ++k)
+                {
+                    if (gridList[j][k] == 6) catLocation = new Vector2Int(j, k);
+                }
+        }
+        }
+        
+        //0 LEFT
+        if (i == 0)
+        {
+            isCatJumping = true;
+            int new_x = catLocation.x;
+            int new_y = catLocation.y;
+            int safeCounter = 0;
+            while (gridList[new_x][new_y] != 1)
+            {
+                new_x -= 1;
+                if (new_x < 0) (new_y, new_x) = (new_y + 1, gridList.Count-1);
+                if (new_y >= gridList[new_x].Count) new_y = 0;
+                safeCounter++;
+                if (safeCounter > 999)
+                {
+                    isCatJumping = false;
+                    return;
+                }
+            }
+            StartCoroutine(SwapTiles(catLocation, new Vector2Int(new_x, new_y)));
+            catLocation = new Vector2Int(new_x, new_y);
+        }
+
+        //1 RIGHT
+        if (i == 1)
+        {
+            isCatJumping = true;
+            int new_x = catLocation.x;
+            int new_y = catLocation.y;
+            int safeCounter = 0;
+            while (gridList[new_x][new_y] != 1)
+            {
+                new_x += 1;
+                if (new_x >= gridList.Count) (new_y, new_x) = (new_y - 1, 0);
+                if (new_y < 0) new_y = gridList[new_x].Count-1;
+                safeCounter++;
+                if (safeCounter > 999)
+                {
+                    isCatJumping = false;
+                    return;
+                }
+            }
+            
+            StartCoroutine(SwapTiles(catLocation, new Vector2Int(new_x,new_y)));
+            catLocation = new Vector2Int(new_x, new_y);
+        }
+
+        //2 UP
+        if (i == 2)
+        {
+            isCatJumping = true;
+            int new_x = catLocation.x;
+            int new_y = catLocation.y;
+            int safeCounter = 0;
+            while (gridList[new_x][new_y] != 1)
+            {
+                new_y += 1;
+                if (new_y >= gridList.Count) new_y = 0;
+                safeCounter++;
+                if (safeCounter > maxDimension)
+                {
+                    isCatJumping = false;
+                    return;
+                }
+
+            }
+
+            StartCoroutine(SwapTiles(catLocation, new Vector2Int(new_x, new_y)));
+            catLocation = new Vector2Int(new_x, new_y);
+        }
+
+        //3 DOWN
+        if (i == 3)
+        {
+            isCatJumping = true;
+            int new_x = catLocation.x;
+            int new_y = catLocation.y;
+            int safeCounter = 0;
+            while (gridList[new_x][new_y] != 1)
+            {
+                new_y -= 1;
+                if (new_y <0) new_y = gridList[new_x].Count - 1;
+                safeCounter++;
+                if (safeCounter > maxDimension)
+                {
+                    isCatJumping = false;
+                    return;
+                }
+            }
+
+            StartCoroutine(SwapTiles(catLocation, new Vector2Int(new_x, new_y)));
+            catLocation = new Vector2Int(new_x, new_y);
+        }
+
+        //4 ENTER
+        if (i == 4)
+        {
+            userInterface.ShowNextRoundButton();
+            userInterface.HideArrows();
+            userInterface.HideYouCanMoveCat();
+            movingCat = false;
+        }
+    }
+
+    IEnumerator SwapTiles(Vector2Int location1, Vector2Int location2)
+    {
+        yield return null;
+        (gridList[location1.x][location1.y], gridList[location2.x][location2.y]) = (gridList[location2.x][location2.y], gridList[location1.x][location1.y]);
+        GameObject tile1 = gridList2[location1.x][location1.y];
+        GameObject tile2 = gridList2[location2.x][location2.y];
+
+        float counter = 0;
+        Vector3 tile1pos = tile1.transform.position;
+        Vector3 tile2pos = tile2.transform.position;
+        Quaternion tile1rotation = tile1.transform.rotation;
+        bool tile2teleported = false;
+        while (counter < flipTime)
+        {
+            tile1.transform.position = Vector3.Lerp(tile1pos, tile2pos + new Vector3(0, 0.05f, 0), counter/flipTime) + new Vector3(0,Mathf.Sin(Mathf.PI*(counter/flipTime)),0) * flipHeight;
+           // tile1.transform.rotation = Quaternion.Lerp(tile1rotation,tile1rotation * Quaternion.Euler(360,0,0),counter/flipTime);
+            if (counter > flipTime / 2 && !tile2teleported) 
+            {
+                tile2teleported = true;
+                tile2.transform.position = tile1pos + new Vector3(0,0.05f,0);
+            } 
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        tile1.transform.position = tile2pos;
+        (gridList2[location1.x][location1.y], gridList2[location2.x][location2.y]) = (gridList2[location2.x][location2.y], gridList2[location1.x][location1.y]);
+        tile1.transform.rotation = tile1rotation;
+        isCatJumping = false;
+
+    }
+
     IEnumerator DisappearTree(GameObject tree)
     {
-        Vector3 stepVector = tree.transform.localScale / 20;
-        for (int i = 1; i < 20; ++i)
+        Vector3 startScale = tree.transform.localScale;
+        float counter = 0;
+        float goalTime = 0.8f;
+        while(counter < goalTime)
         {
-            yield return new WaitForSeconds(0.05f);
-            tree.transform.localScale -= stepVector;
+            yield return null;
+            tree.transform.localScale = Vector3.Lerp(startScale, new Vector3(), counter / goalTime);
+            counter += Time.deltaTime;
         }
         Destroy(tree.gameObject);
     }
@@ -713,6 +878,7 @@ public class GridManager : MonoBehaviour
         shapeScript.userInterface = userInterface;
         shapeScript.cameraMover = cameraMover;
         shapeScript.gridManager = this;
+        shapeScript.gameManager = gameManager;
         shapeScript.startPosition = catPosition;
         shapeScript.GenerateFirstTime(shapeType, wispType);
         currentShape = newShape;

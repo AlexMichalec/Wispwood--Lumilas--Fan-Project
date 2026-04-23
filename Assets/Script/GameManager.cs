@@ -46,6 +46,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        if (!userInterface.testingMenu)StartGame();
+    }
+
+    public void StartGame()
+    {
+        userInterface.HideDealNewWisps();
         StartCoroutine(SpawnTiles());
         StartCoroutine(SpawnShapeChoices());
     }
@@ -125,7 +131,11 @@ public class GameManager : MonoBehaviour
 
             }
         }
-        
+
+        yield return new WaitForSeconds(1);
+
+        StartCoroutine(PondFlipAll());
+
         //for (int i = 0; i<spawnPlatforms.Length; i++)
         //{
         //    Instantiate(tilePrefabs[Random.Range(0,4)], spawnPlatforms[i].transform.position + new Vector3(0,0.6f,0), Quaternion.Euler(0,180,0));
@@ -142,10 +152,20 @@ public class GameManager : MonoBehaviour
     {
         round++;
         gridManager.Deforest();
+        gridManager.movingCat = false;
         gridManager.maxDimension += 1;
         userInterface.UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));
         userInterface.ResetDetailedScore();
+        StartCoroutine(NewRoundCoroutine());
+        
     }
+
+    IEnumerator NewRoundCoroutine()
+    {
+        yield return new WaitForSeconds(0.8f);
+        cameraMover.changePosition();
+    }
+
 
     IEnumerator PondFlip(GameObject flippedTile, Vector3 newPosition, float flipTime, float maxHeight)
     {
@@ -242,12 +262,35 @@ public class GameManager : MonoBehaviour
             shapeChoices[i].GetComponent<ShapeChoice>().Deactivate();
 
         }
-        Destroy(chosenWisp);
+        chosenWisp.SetActive(false);
         print("CHOICE " + shapeType);
         cameraMover.changePosition();
         gridManager.AddNewShape(shapeType, chosenWisp.GetComponent<TileScript>().wispType);
         userInterface.HidePondActions();
         userInterface.ShowArrowsForShapes();
+    }
+
+    public void UndoChoice()
+    {
+        chosenWisp.SetActive(true);
+        chosenWisp.GetComponent<TileScript>().PutInPond();
+        chosenWisp = null;
+
+    }
+
+    public void FinalizeChoice()
+    {
+        Destroy(chosenWisp);
+        chosenWisp = null;
+    }
+
+    public void FinishRound()
+    {
+        gridManager.SubmitGrid();
+        gridManager.movingCat = true;
+        userInterface.ShowArrows();
+        userInterface.HideTreeTurnActions();
+        userInterface.ShowYouCanMoveCat();
     }
 
     public void TreeTurn()

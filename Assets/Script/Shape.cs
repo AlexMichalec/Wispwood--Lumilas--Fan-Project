@@ -33,6 +33,7 @@ public class Shape : MonoBehaviour
     public GridManager gridManager;
     public UI userInterface;
     public MoveCamera cameraMover;
+    public GameManager gameManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -229,7 +230,8 @@ public class Shape : MonoBehaviour
         }
 
         //"Każda nowa wiedźma musi być umieszczona dokładnie dwa pola od kota."
-        if (methodIndex == 5) return (Mathf.Abs(catLocation.x - witchLocation.x) == 2 && Mathf.Abs(catLocation.y - witchLocation.y) <= 2) || (Mathf.Abs(catLocation.y - witchLocation.y) == 2 && Mathf.Abs(catLocation.x - witchLocation.x) <= 2);
+        if (methodIndex == 5) return (Mathf.Abs(catLocation.x - witchLocation.x) == 2 && Mathf.Abs(catLocation.y - witchLocation.y) <= 2) || 
+                (Mathf.Abs(catLocation.y - witchLocation.y) == 2 && Mathf.Abs(catLocation.x - witchLocation.x) <= 2);
 
 
         return false;
@@ -386,14 +388,20 @@ public class Shape : MonoBehaviour
         }
 
         //gridManager.printInnerGrid();
+        gameManager.FinalizeChoice();
         userInterface.HideArrows();
-        StartCoroutine(WaitMoveCamera());
+        if (gridManager.IsFull())
+        {
+            gameManager.FinishRound();
+            Destroy(gameObject);
+        }
+        else StartCoroutine(WaitMoveCamera());
         
     }
 
     IEnumerator WaitMoveCamera()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.8f);
         cameraMover.changePosition();
         Destroy(gameObject);
     }
@@ -453,6 +461,19 @@ public class Shape : MonoBehaviour
         if (i == 8)
         {
             ChangeGhostIndex();
+        }
+
+        //9 UNDO
+        if (i == 9)
+        {
+            gameManager.UndoChoice();
+            userInterface.HideArrows();
+            cameraMover.changePosition();
+            for (int j = 0; j < tileList.Count; ++j)
+            {
+                Destroy(tileList[j]);
+            }
+            Destroy(gameObject);
         }
     }
 

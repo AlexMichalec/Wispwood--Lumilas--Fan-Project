@@ -8368,7 +8368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a49dcb8d29363f499f634a878c70b7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI
-  testingMenu: 1
+  testingMenu: 0
   MenuPanel: {fileID: 4778667}
   StepOne: {fileID: 1890045560}
   CatTilePrefab: {fileID: 6198161037528683181, guid: 7cbecd132da814e4b89010336d9470d5, type: 3}
@@ -8421,7 +8421,6 @@ MonoBehaviour:
   gameManager: {fileID: 1133215562}
   gridManager: {fileID: 1010832361}
   scoreManager: {fileID: 1200114621}
-  cameraMover: {fileID: 0}
 --- !u!114 &808890010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10944,7 +10943,7 @@ MonoBehaviour:
   spawnHeight: 0.2
   movingCat: 0
   flipHeight: 0.8
-  flipTime: 0.4
+  flipTime: 0.5
   tilePrefabs:
   - {fileID: 5200289636737685521, guid: a9dcbf5541dc5544f8da2b0121d18017, type: 3}
   - {fileID: 8340261716456510779, guid: 1acdb73d7b84e4047a0c06a8f37d16a4, type: 3}
