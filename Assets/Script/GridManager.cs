@@ -56,7 +56,7 @@ public class GridManager : MonoBehaviour
     private float rotateForce;
 
 
-    // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - duszek, 6 - kot
+    // 0 - puste, 1 - drzewo, 2 - dynia, 3 - serce, 4 - wiedżma, 5 - ognik, 6 - kot
     void Start()
     {
         InitializeGrid();
