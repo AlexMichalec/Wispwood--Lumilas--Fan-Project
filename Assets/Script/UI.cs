@@ -34,7 +34,7 @@ public class UI : MonoBehaviour
 
     [Header("Pond - UI")]
     public GameObject pondActions;
-    public GameObject DealNewWispsButton;
+    public GameObject dealNewWispsButton;
     public GameObject CatActionWispsButton;
     public GameObject CatActionsShapesButton;
 
@@ -44,6 +44,15 @@ public class UI : MonoBehaviour
     public GameObject treeTurnActions;
     public TextMeshProUGUI treeCounter;
     private int treeCounterInt = 0;
+
+    [Header("Single Player")]
+    public GameObject ghostButton;
+    public TextMeshProUGUI ghostScoreboard;
+    public TextMeshProUGUI fireflyNowText;
+    public TextMeshProUGUI fireflyLeftText;
+    private List<string> scoreBoardStrings;
+    private List<Vector2Int> scoreBoardList;
+
 
 
     [Header("Navigation")]
@@ -198,7 +207,7 @@ public class UI : MonoBehaviour
         CatActionWispsButton.SetActive(true);
         CatActionsShapesButton.SetActive(false);
         pondActions.SetActive(true);
-        DealNewWispsButton.SetActive(gameManager.CanDealNewWispsForFree());
+        dealNewWispsButton.SetActive(gameManager.CanDealNewWispsForFree());
     }
 
     public void HideTreeTurnActions()
@@ -254,8 +263,60 @@ public class UI : MonoBehaviour
 
     public void HideDealNewWisps()
     {
-        DealNewWispsButton.SetActive(false);
+        dealNewWispsButton.SetActive(false);
     }
 
+    public void InitializeGhostScoreboard(List<int> wispMultipliers)
+    {
+        List<Vector2Int> tempList = new List<Vector2Int>();
+        for (int i = 0; i < wispMultipliers.Count; i++) {
+            tempList.Add(new Vector2Int(wispMultipliers[i], i));
+        }
 
+        for (int i = 0; i < tempList.Count; ++i)
+        {
+            for (int j = i+1; j < tempList.Count; ++j) 
+            { 
+                if (tempList[i].x < tempList[j].x)
+                {
+                    (tempList[i], tempList[j]) = (tempList[j], tempList[i]);
+                }
+            }
+        }
+        string goalBoard = "";
+        string[] wispNames = { "Dynia", "Serce", "Wiedźma", "Ognik" };
+        scoreBoardStrings = new List<string>();
+        for (int i = 0; i < tempList.Count; ++i)
+        {
+            goalBoard += tempList[i].x + ". " + wispNames[tempList[i].y] + "...........\n";
+            scoreBoardStrings.Add(tempList[i].x + ". " + wispNames[tempList[i].y]);
+        }
+        scoreBoardList = tempList;
+        print(goalBoard);
+        ghostScoreboard.text = goalBoard;
+    }
+
+    public void UpdateGhostScore(List<int> collectedWisps)
+    {
+        string result = "";
+        for (int i = 0; i < scoreBoardList.Count;++i)
+        {
+            int amount = collectedWisps[scoreBoardList[i].y];
+            int points = amount * scoreBoardList[i].x;
+            result += scoreBoardStrings[i] + " x" + amount + "....." + points +"p\n";
+        }
+        ghostScoreboard.text = result;
+    }
+
+    public void InitializeFireflies(int amount)
+    {
+        fireflyNowText.text = "";
+        fireflyLeftText.text = amount.ToString();
+    }
+
+    public void UpdateFireflies(int now, int left)
+    {
+        fireflyNowText.text = now.ToString();
+        fireflyLeftText.text = left.ToString();
+    }
 }

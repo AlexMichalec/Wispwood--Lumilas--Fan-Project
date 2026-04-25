@@ -36,12 +36,15 @@ public class GameManager : MonoBehaviour
     [Header("Others")]
     public int round = 1;
     public bool isCatHidden = false;
+    public bool singlePlayer = true;
     private GameObject chosenWisp;
+    private bool enemySpawned = false;
 
     [Header("Navigation")]
     public GridManager gridManager;
     public UI userInterface;
     public MoveCamera cameraMover;
+    public EnemyManager enemyManager;
 
 
     void Start()
@@ -143,6 +146,14 @@ public class GameManager : MonoBehaviour
         
     }
 
+    void SpawnEnemyTile(int index = -1)
+    {
+        if (index == -1) index = Random.Range(0, pondTiles.Count - 1);
+        Vector3 pos = pondTiles[index].transform.position;
+        Destroy(pondTiles[index]);
+        enemyManager.SpawnEnemy(pos, index);
+    }
+
     public void ResetGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -200,20 +211,33 @@ public class GameManager : MonoBehaviour
         flippedTile.GetComponent<TileScript>().PutInPond();
     }
 
-    IEnumerator PondFlipAll()
+   public IEnumerator PondFlipAll()
     {
-        for (int i = 0; i < pondTiles.Count; i++) Destroy(pondTiles[i]);
-        pondTiles.Clear();
+        for (int i = 0; i < pondTiles.Count; i++)
+        {
+            if (pondTiles[i] != null && pondTiles[i].GetComponent<TileScript>().isEnemy) continue;
+            Destroy(pondTiles[i]); 
+        }
+
+        if (pondTiles.Count == 0) pondTiles = new List<GameObject> { null, null, null, null, null, null, null, null };
 
         for (int i = 0; i < spawnPlatforms.Length; i++)
         {
+            if (pondTiles[i] != null) continue;
             int stackIndex = Random.Range(0, tileStacks.Count);
-            GameObject randomTile = tileStacks[stackIndex][Random.Range(0, tileStacks[stackIndex].Count)];
-            pondTiles.Add(randomTile);
+            GameObject randomTile = tileStacks[stackIndex][tileStacks[stackIndex].Count - 1];// Random.Range(0, tileStacks[stackIndex].Count)];
+            pondTiles[i] = randomTile;
             randomTile.GetComponent<TileScript>().pondIndex = i;
             tileStacks[stackIndex].Remove(randomTile);
             StartCoroutine(PondFlip(randomTile, spawnPlatforms[i].transform.position + new Vector3(0, 0.2f, 0), pondFlipTime,pondFlipMaxHeight));
             yield return new WaitForSeconds(0.1f);
+        }
+
+        if (singlePlayer && !enemySpawned)
+        {
+            yield return new WaitForSeconds(pondFlipTime);
+            enemySpawned = true;
+            SpawnEnemyTile();
         }
     }
 
@@ -233,7 +257,7 @@ public class GameManager : MonoBehaviour
         int firstType = -1;
         for (int i = 0; i < pondTiles.Count; ++i)
         {
-            if (pondTiles[i] == null) continue;
+            if (pondTiles[i] == null || pondTiles[i].GetComponent<TileScript>().isEnemy) continue;
             isEmpty = false;
             int wispType = pondTiles[i].GetComponent<TileScript>().wispType;
             if (firstType == -1) firstType = wispType;
@@ -328,6 +352,16 @@ public class GameManager : MonoBehaviour
         {
             shapeChoices[i].GetComponent<ShapeChoice>().Activate();
         }
+    }
+
+    public List<GameObject> GetPondTiles()
+    {
+        return pondTiles;
+    }
+
+    public void NextPlayer(bool lastTurn = false)
+    {
+        
     }
 
     void Update()

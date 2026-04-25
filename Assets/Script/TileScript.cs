@@ -5,6 +5,7 @@ public class TileScript : MonoBehaviour
     public bool inPond = false;
     public int wispType;
     public int pondIndex;
+    public bool isEnemy = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
