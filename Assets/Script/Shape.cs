@@ -402,7 +402,8 @@ public class Shape : MonoBehaviour
     IEnumerator WaitMoveCamera()
     {
         yield return new WaitForSeconds(0.8f);
-        cameraMover.changePosition();
+        gameManager.NextPlayer();
+        //cameraMover.changePosition();
         Destroy(gameObject);
     }
 

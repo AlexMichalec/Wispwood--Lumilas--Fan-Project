@@ -59,11 +59,7 @@ public class MoveCamera : MonoBehaviour
         }
         transform.position = endPostion;
         moving = false;
-        if (targetIndex == 1)
-        {
-            userInterface.ShowPondActions();
-            
-                }
+
     }
 
     IEnumerator moveCameraOld()

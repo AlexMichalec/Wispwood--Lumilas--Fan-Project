@@ -45,6 +45,7 @@ public class GridManager : MonoBehaviour
     //Variables
     private int treeTurnCounter = 0;
     private int choiceIndex = 0;
+    private bool inputEnabled = true;
     
 
     //Does it have to be global?
@@ -64,6 +65,11 @@ public class GridManager : MonoBehaviour
         Debug.Log("MC " + moveCenter);
         StartCoroutine(lateUpdateChoiceTile());
 
+    }
+
+    public void SetInputEnabled(bool enabled)
+    {
+        inputEnabled = enabled;
     }
 
     public void resetCat()
@@ -603,6 +609,7 @@ public class GridManager : MonoBehaviour
 
     public void ButtonInputManager(int i)
     {
+        if (!inputEnabled) return;
         //If we're adding a shape currently
         if (currentShape != null) 
         {

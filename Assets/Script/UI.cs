@@ -1,9 +1,11 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using TMPro.EditorUtilities;
-using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem.Android;
+using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI.Table;
 public class UI : MonoBehaviour
 {
 
@@ -30,6 +32,7 @@ public class UI : MonoBehaviour
     public TextMeshProUGUI topText;
     public GameObject nextRoundButton;
     public TextMeshProUGUI youCanMoveCatText;
+    public TextMeshProUGUI lastTurnText;
     public int round = 4;
 
     [Header("Pond - UI")]
@@ -48,10 +51,16 @@ public class UI : MonoBehaviour
     [Header("Single Player")]
     public GameObject ghostButton;
     public TextMeshProUGUI ghostScoreboard;
+    public TextMeshProUGUI ghostScoreboardRight;
+    public GameObject ghostScoreWindow;
     public TextMeshProUGUI fireflyNowText;
     public TextMeshProUGUI fireflyLeftText;
+    public GameObject fireFliesObject;
+    public TextMeshProUGUI enemyActionInfo;
+    public GameObject enemyActionObject;
     private List<string> scoreBoardStrings;
     private List<Vector2Int> scoreBoardList;
+    private string[] wispNames = { "Dynia", "Serce", "Wiedźma", "Ognik" };
 
 
 
@@ -74,8 +83,8 @@ public class UI : MonoBehaviour
             MenuPanel.SetActive(true);
             cameraMover.changePosition();
         }
-        
-       // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
+
+        // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
         //CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[0];
 
 
@@ -266,17 +275,18 @@ public class UI : MonoBehaviour
         dealNewWispsButton.SetActive(false);
     }
 
-    public void InitializeGhostScoreboard(List<int> wispMultipliers)
+    public IEnumerator InitializeGhostScoreboard(List<int> wispMultipliers)
     {
         List<Vector2Int> tempList = new List<Vector2Int>();
-        for (int i = 0; i < wispMultipliers.Count; i++) {
+        for (int i = 0; i < wispMultipliers.Count; i++)
+        {
             tempList.Add(new Vector2Int(wispMultipliers[i], i));
         }
 
         for (int i = 0; i < tempList.Count; ++i)
         {
-            for (int j = i+1; j < tempList.Count; ++j) 
-            { 
+            for (int j = i + 1; j < tempList.Count; ++j)
+            {
                 if (tempList[i].x < tempList[j].x)
                 {
                     (tempList[i], tempList[j]) = (tempList[j], tempList[i]);
@@ -284,39 +294,160 @@ public class UI : MonoBehaviour
             }
         }
         string goalBoard = "";
-        string[] wispNames = { "Dynia", "Serce", "Wiedźma", "Ognik" };
         scoreBoardStrings = new List<string>();
         for (int i = 0; i < tempList.Count; ++i)
         {
             goalBoard += tempList[i].x + ". " + wispNames[tempList[i].y] + "...........\n";
             scoreBoardStrings.Add(tempList[i].x + ". " + wispNames[tempList[i].y]);
         }
+        //Animacja
+        float counter = 0;
+        float baseTime = 1f;
+        int baseIndex = 0;
+        string tempText = "";
+        ghostScoreWindow.SetActive(true);
+
+        while ( counter < baseTime)
+        {
+            yield return null;
+            counter += Time.deltaTime;
+            baseIndex = (baseIndex + 1) % wispNames.Length;
+            tempText = "";
+            for (int i = 0; i < tempList.Count; ++i)
+            {
+                int j = (baseIndex + i)%tempList.Count;
+                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+            }
+            ghostScoreboard.text = tempText;
+        }
+
+        while (counter < 2* baseTime)
+        {
+            yield return null;
+            counter += Time.deltaTime;
+            baseIndex = 1 + (baseIndex + 1) % (wispNames.Length-1);
+            tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n";
+            for (int i = 1; i < tempList.Count; ++i)
+            {
+                int j = 1 + (baseIndex + i) % (wispNames.Length - 1);
+                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+            }
+            ghostScoreboard.text = tempText;
+        }
+
+        while (counter < 3 * baseTime)
+        {
+            yield return null;
+            counter += Time.deltaTime;
+            baseIndex = 1 + (baseIndex + 1) % (wispNames.Length - 1);
+            tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n" + tempList[1].x + ". " + wispNames[tempList[1].y] + "\n";
+            for (int i = 2; i < tempList.Count; ++i)
+            {
+                int j = 1 + (baseIndex + i) % (wispNames.Length - 1);
+                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+            }
+            ghostScoreboard.text = tempText;
+        }
+
         scoreBoardList = tempList;
-        print(goalBoard);
         ghostScoreboard.text = goalBoard;
+        
+        ghostButton.SetActive(false);
+        yield return new WaitForSeconds(2);
+        ghostScoreWindow.SetActive(false);
+        ghostButton.SetActive(true);
+        StartCoroutine(gameManager.FirstEnemyMoveRound());
     }
 
-    public void UpdateGhostScore(List<int> collectedWisps)
+    public void UpdateGhostScore(List<int> collectedWisps, int newWisp)
     {
         string result = "";
-        for (int i = 0; i < scoreBoardList.Count;++i)
+        for (int i = 0; i < scoreBoardList.Count; ++i)
         {
             int amount = collectedWisps[scoreBoardList[i].y];
             int points = amount * scoreBoardList[i].x;
-            result += scoreBoardStrings[i] + " x" + amount + "....." + points +"p\n";
+            result += scoreBoardStrings[i] + " x" + amount + "\n"; //"....." + points + "p\n";
         }
         ghostScoreboard.text = result;
+
+        StartCoroutine(EnemyActionUpdate("Duch zebrał: " + wispNames[newWisp]));
     }
 
     public void InitializeFireflies(int amount)
     {
+        fireFliesObject.SetActive(true);
         fireflyNowText.text = "";
         fireflyLeftText.text = amount.ToString();
+        StartCoroutine(EnemyActionUpdate("Przygotowano świetlików: " + amount));
     }
 
     public void UpdateFireflies(int now, int left)
     {
         fireflyNowText.text = now.ToString();
         fireflyLeftText.text = left.ToString();
+        StartCoroutine(EnemyActionUpdate("Wylosowany Świetlik: " + now + " Pozostało świetlików: " + left, 3));
+    }
+
+    public IEnumerator EnemyActionUpdate(string newText, float lastTime = 2)
+    {
+        enemyActionObject.SetActive(true);
+        enemyActionInfo.text = newText;
+        yield return new WaitForSeconds(lastTime);
+        enemyActionObject.SetActive(false);
+
+    }
+
+    public void ResetEnemyActionInfo()
+    {
+        enemyActionObject.SetActive(false);
+    }
+
+    public void ShowLastTurn()
+    {
+        lastTurnText.gameObject.SetActive(true);
+    }
+
+    public void HideLastTurn()
+    {
+        lastTurnText.gameObject.SetActive(false);
+    }
+
+    public IEnumerator ShowEnemyScoreRound(List <int> scoreArray)
+    {
+        ghostScoreWindow.SetActive(true);
+        int runda = gameManager.round - 1;
+        for (int i =0; i < 7; ++i)
+        {
+            yield return new WaitForSeconds(1);
+            string tempText = "1   2   3";
+            for (int j = 0;  j < scoreArray.Count; ++j)
+            {
+                if (j % 3 == 0) tempText += "\n";
+                if (j % 3 < runda || (j % 3 == runda && j/3 < i) || ( i==6 && j == 15))
+                {
+                    int x = scoreArray[j];
+                    if (x < 10)
+                    {
+                        tempText += "[ " + x + " ]";
+                    }
+                    else if (x < 100)
+                    {
+                        tempText += "[ " + x + "]";
+                    }
+                    else
+                    {
+                        tempText += "[" + x + "]";
+                    }
+                }
+                else
+                {
+                    tempText += "[   ]";
+                }
+            }
+            ghostScoreboardRight.text = tempText;
+
+        }
+        yield return new WaitForSeconds(3);
+        ghostScoreWindow.SetActive(false);
     }
 }

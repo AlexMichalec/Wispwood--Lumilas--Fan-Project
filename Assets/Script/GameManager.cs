@@ -32,13 +32,22 @@ public class GameManager : MonoBehaviour
     private List<GameObject> shapeChoices = new List<GameObject>();
     public float shapeChoicesRadius = 1;
     public float shapeChoiceHeight = 0.1f;
-    
+
+    [Header("Waiting times")]
+    public float enemyMoveDelay = 0.1f;
+    public float playerTurnDelat = 1f;
+    public float enemySetScoringDelay = 0.1f;
+    public float enemyFirefliesDelay = 0.1f;
+    public float enemyFirefliesAfterDelay = 0.2f;
+
     [Header("Others")]
     public int round = 1;
     public bool isCatHidden = false;
     public bool singlePlayer = true;
+    private bool isEnemyTurn = true;
     private GameObject chosenWisp;
     private bool enemySpawned = false;
+    public bool inputEnabled = true;
 
     [Header("Navigation")]
     public GridManager gridManager;
@@ -55,6 +64,13 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         userInterface.HideDealNewWisps();
+        if (singlePlayer)
+        {
+            userInterface.HidePondActions();
+            inputEnabled = false;
+            gridManager.SetInputEnabled(false);
+            userInterface.ResetEnemyActionInfo();
+        }
         StartCoroutine(SpawnTiles());
         StartCoroutine(SpawnShapeChoices());
     }
@@ -152,6 +168,24 @@ public class GameManager : MonoBehaviour
         Vector3 pos = pondTiles[index].transform.position;
         Destroy(pondTiles[index]);
         enemyManager.SpawnEnemy(pos, index);
+        StartCoroutine(FirstEnemyMoveGame());
+
+    }
+
+    IEnumerator FirstEnemyMoveGame()
+    {
+        yield return new WaitForSeconds(enemySetScoringDelay);
+        //losuj Punktację
+        enemyManager.SetWispsMultipliers();
+    }
+
+    public IEnumerator FirstEnemyMoveRound()
+    {
+        yield return new WaitForSeconds(enemyFirefliesDelay);
+        //Losuj świetliki
+        enemyManager.ChooseFireflies();
+        yield return new WaitForSeconds(enemyFirefliesAfterDelay);
+        StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
     }
 
     public void ResetGame()
@@ -167,6 +201,7 @@ public class GameManager : MonoBehaviour
         gridManager.maxDimension += 1;
         userInterface.UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));
         userInterface.ResetDetailedScore();
+        userInterface.HideLastTurn();
         StartCoroutine(NewRoundCoroutine());
         
     }
@@ -175,6 +210,10 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.8f);
         cameraMover.changePosition();
+        isEnemyTurn = true;
+        inputEnabled = false;
+        gridManager.SetInputEnabled(false);
+        StartCoroutine(FirstEnemyMoveRound());
     }
 
 
@@ -213,6 +252,7 @@ public class GameManager : MonoBehaviour
 
    public IEnumerator PondFlipAll()
     {
+        
         for (int i = 0; i < pondTiles.Count; i++)
         {
             if (pondTiles[i] != null && pondTiles[i].GetComponent<TileScript>().isEnemy) continue;
@@ -269,6 +309,7 @@ public class GameManager : MonoBehaviour
 
     public void ChooseWisp(GameObject WispTile)
     {
+        
         int pondIndex = WispTile.GetComponent<TileScript>().pondIndex;
         int indexBefore = (pondIndex + 1) % shapeChoices.Count;
         int indexAfter = (pondIndex + 2) % shapeChoices.Count; ;
@@ -292,6 +333,7 @@ public class GameManager : MonoBehaviour
         gridManager.AddNewShape(shapeType, chosenWisp.GetComponent<TileScript>().wispType);
         userInterface.HidePondActions();
         userInterface.ShowArrowsForShapes();
+        gridManager.SetInputEnabled(true);
     }
 
     public void UndoChoice()
@@ -299,7 +341,7 @@ public class GameManager : MonoBehaviour
         chosenWisp.SetActive(true);
         chosenWisp.GetComponent<TileScript>().PutInPond();
         chosenWisp = null;
-
+        userInterface.ShowPondActions();
     }
 
     public void FinalizeChoice()
@@ -315,6 +357,7 @@ public class GameManager : MonoBehaviour
         userInterface.ShowArrows();
         userInterface.HideTreeTurnActions();
         userInterface.ShowYouCanMoveCat();
+        ShowEnemyScore();
     }
 
     public void TreeTurn()
@@ -324,7 +367,7 @@ public class GameManager : MonoBehaviour
         if (isCatHidden) StartCoroutine(flipCatLate());
         isCatHidden = false;
         userInterface.HidePondActions();
-
+        gridManager.SetInputEnabled(true);
     }
 
     IEnumerator flipCatLate()
@@ -361,7 +404,27 @@ public class GameManager : MonoBehaviour
 
     public void NextPlayer(bool lastTurn = false)
     {
-        
+        print("KLIK?");
+        isEnemyTurn = !isEnemyTurn;
+        if (lastTurn) userInterface.ShowLastTurn();
+        if (isEnemyTurn)
+        {
+            cameraMover.changePosition();
+            gridManager.SetInputEnabled(false);
+            userInterface.HidePondActions();
+            StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
+        }
+        else
+        {
+            StartCoroutine(DelayPlayerUI());
+        }
+    }
+
+    IEnumerator DelayPlayerUI()
+    {
+        yield return new WaitForSeconds(playerTurnDelat);
+        userInterface.ShowPondActions();
+        inputEnabled = true;
     }
 
     void Update()
@@ -369,6 +432,31 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U))
         {
             StartCoroutine(PondFlipAll());
+        }
+    }
+
+    public void ShowEnemyScore()
+    {
+        enemyManager.ScoreRound();
+    }
+
+    private Color platformOldColor;
+    public void LightUp(List<GameObject> tileList)
+    {
+        for (int i = 0; i < tileList.Count; i++)
+        {
+            int j = pondTiles.IndexOf(tileList[i]);
+            platformOldColor = spawnPlatforms[j].GetComponent<Renderer>().material.color;
+            spawnPlatforms[j].GetComponent<Renderer>().material.color = Color.yellow;
+        }
+    }
+
+    public void DarkOut(List <GameObject> tileList)
+    {
+        for (int i = 0; i < tileList.Count; i++)
+        {
+            int j = pondTiles.IndexOf(tileList[i]);
+            spawnPlatforms[j].GetComponent<Renderer>().material.color = platformOldColor;
         }
     }
 }
