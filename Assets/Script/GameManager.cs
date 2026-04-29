@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
     private GameObject chosenWisp;
     private bool enemySpawned = false;
     public bool inputEnabled = true;
+    private Color platformOldColor;
 
     [Header("Navigation")]
     public GridManager gridManager;
@@ -223,7 +224,7 @@ public class GameManager : MonoBehaviour
         flippedTile.GetComponent<Rigidbody>().mass = 0;
         Vector3 oldPosition = flippedTile.transform.position;
         Quaternion oldRotation = flippedTile.transform.rotation;
-        Quaternion newRotation = flippedTile.transform.rotation * Quaternion.Euler(180, 0, 0);
+        Quaternion newRotation = Quaternion.Euler(0, Random.Range(0,360), 0);
         while (counter < flipTime)
         {
             counter += Time.deltaTime;
@@ -269,7 +270,7 @@ public class GameManager : MonoBehaviour
             pondTiles[i] = randomTile;
             randomTile.GetComponent<TileScript>().pondIndex = i;
             tileStacks[stackIndex].Remove(randomTile);
-            StartCoroutine(PondFlip(randomTile, spawnPlatforms[i].transform.position + new Vector3(0, 0.2f, 0), pondFlipTime,pondFlipMaxHeight));
+            StartCoroutine(PondFlip(randomTile, spawnPlatforms[i].transform.position + new Vector3(0, 0.1f, 0), pondFlipTime,pondFlipMaxHeight));
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -279,6 +280,11 @@ public class GameManager : MonoBehaviour
             enemySpawned = true;
             SpawnEnemyTile();
         }
+    }
+
+    public Vector3 GetPlatformPosition(int i)
+    {
+        return spawnPlatforms[i].transform.position;
     }
 
     public void DealNewWisps()
@@ -307,9 +313,23 @@ public class GameManager : MonoBehaviour
         return isEmpty || isTheSameType;
     }
 
+    void DeactivateAllShapes()
+    {
+        for (int i = 0; i < shapeChoices.Count; i++)
+        {
+            shapeChoices[i].GetComponent<ShapeChoice>().Deactivate();
+
+        }
+    }
+
     public void ChooseWisp(GameObject WispTile)
     {
-        
+        if (chosenWisp != null)
+        {
+            chosenWisp.GetComponent<TileScript>().PutInPond();
+            DeactivateAllShapes();
+
+        }   
         int pondIndex = WispTile.GetComponent<TileScript>().pondIndex;
         int indexBefore = (pondIndex + 1) % shapeChoices.Count;
         int indexAfter = (pondIndex + 2) % shapeChoices.Count; ;
@@ -322,11 +342,7 @@ public class GameManager : MonoBehaviour
 
     public void ChooseShape(int shapeType)
     {
-        for (int i = 0; i < shapeChoices.Count; i++)
-        {
-            shapeChoices[i].GetComponent<ShapeChoice>().Deactivate();
-
-        }
+        DeactivateAllShapes();
         chosenWisp.SetActive(false);
         print("CHOICE " + shapeType);
         cameraMover.changePosition();
@@ -353,15 +369,28 @@ public class GameManager : MonoBehaviour
     public void FinishRound()
     {
         gridManager.SubmitGrid();
-        gridManager.movingCat = true;
-        userInterface.ShowArrows();
+        gridManager.SetInputEnabled(false);
         userInterface.HideTreeTurnActions();
-        userInterface.ShowYouCanMoveCat();
+        userInterface.HideLastTurn();
         ShowEnemyScore();
+    }
+
+    public void PrepareCatToMove()
+    {
+        gridManager.movingCat = true;
+        gridManager.SetInputEnabled(true);
+        userInterface.ShowArrows();
+        userInterface.ShowYouCanMoveCat();
     }
 
     public void TreeTurn()
     {
+        
+        if (chosenWisp!= null)
+        {
+            DeactivateAllShapes();
+            chosenWisp.GetComponent<TileScript>().PutInPond();
+        }
         cameraMover.changePosition();
         gridManager.TreeTurn();
         if (isCatHidden) StartCoroutine(flipCatLate());
@@ -372,7 +401,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator flipCatLate()
     {
-        userInterface.flipCat();
+        userInterface.HideCatHidden();
         yield return new WaitForSeconds(2);
         StartCoroutine(gridManager.FlipCatTile());
         
@@ -381,7 +410,7 @@ public class GameManager : MonoBehaviour
     public void CatActionNewWisps()
     {
         isCatHidden = true;
-        userInterface.flipCat();
+        userInterface.ShowCatHidden();
         StartCoroutine(gridManager.FlipCatTile());
         StartCoroutine(PondFlipAll());
     }
@@ -389,7 +418,7 @@ public class GameManager : MonoBehaviour
     public void CatActionAllShapes()
     {
         isCatHidden = true;
-        userInterface.flipCat();
+        userInterface.ShowCatHidden();
         StartCoroutine(gridManager.FlipCatTile());
         for (int i = 0; i < shapeChoices.Count; ++i)
         {
@@ -409,6 +438,8 @@ public class GameManager : MonoBehaviour
         if (lastTurn) userInterface.ShowLastTurn();
         if (isEnemyTurn)
         {
+            userInterface.HideTreeTurnActions();
+            userInterface.HideArrows();
             cameraMover.changePosition();
             gridManager.SetInputEnabled(false);
             userInterface.HidePondActions();
@@ -417,6 +448,7 @@ public class GameManager : MonoBehaviour
         else
         {
             StartCoroutine(DelayPlayerUI());
+            gridManager.isLastTurn = lastTurn;
         }
     }
 
@@ -425,13 +457,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(playerTurnDelat);
         userInterface.ShowPondActions();
         inputEnabled = true;
+        
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            StartCoroutine(PondFlipAll());
+            GameOver();
         }
     }
 
@@ -440,7 +473,7 @@ public class GameManager : MonoBehaviour
         enemyManager.ScoreRound();
     }
 
-    private Color platformOldColor;
+    
     public void LightUp(List<GameObject> tileList)
     {
         for (int i = 0; i < tileList.Count; i++)
@@ -458,5 +491,10 @@ public class GameManager : MonoBehaviour
             int j = pondTiles.IndexOf(tileList[i]);
             spawnPlatforms[j].GetComponent<Renderer>().material.color = platformOldColor;
         }
+    }
+
+    public void GameOver()
+    {
+        userInterface.ShowGameOverWindow(gridManager.myScore.myScore, enemyManager.GetFinalScore());
     }
 }

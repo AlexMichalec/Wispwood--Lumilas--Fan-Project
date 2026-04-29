@@ -390,7 +390,7 @@ public class Shape : MonoBehaviour
         //gridManager.printInnerGrid();
         gameManager.FinalizeChoice();
         userInterface.HideArrows();
-        if (gridManager.IsFull())
+        if (gridManager.IsFull() || gridManager.isLastTurn)
         {
             gameManager.FinishRound();
             Destroy(gameObject);

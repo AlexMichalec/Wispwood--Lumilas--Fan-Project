@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour
     public float distanceBetweenTiles = 0.4f;
     public float spawnHeight = 0.1f;
     public bool movingCat = false;
+    public bool isLastTurn = false;
 
     [Header("Cat Flipping")]
     public float flipHeight;
@@ -664,8 +665,19 @@ public class GridManager : MonoBehaviour
             printInnerGrid();
             if (treeTurnCounter < 3)
             {
+                if (IsFull())
+                {
+                    gameManager.FinishRound();
+                    return;
+                }
                 PreparePossiblePlaces();
                 setNextChoice();
+            }
+            else
+            {
+                if (isLastTurn || IsFull()) gameManager.FinishRound();
+                else gameManager.NextPlayer();
+
             }
         }
     }

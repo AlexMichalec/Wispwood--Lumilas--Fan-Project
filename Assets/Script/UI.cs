@@ -60,9 +60,14 @@ public class UI : MonoBehaviour
     public GameObject enemyActionObject;
     private List<string> scoreBoardStrings;
     private List<Vector2Int> scoreBoardList;
-    private string[] wispNames = { "Dynia", "Serce", "Wiedźma", "Ognik" };
+    private string[] wispNames = { "Dynia  ", "Serce  ", "Wiedźma", "Ognik  " };
 
-
+    [Header("Game Over Screen")]
+    public GameObject GameOverWindow;
+    public GameObject GameOverWin;
+    public GameObject GameOverLose;
+    public GameObject GameOverTie;
+    public TextMeshProUGUI GameOverScores;
 
     [Header("Navigation")]
     public GameManager gameManager;
@@ -166,9 +171,14 @@ public class UI : MonoBehaviour
 
     }
 
-    public void flipCat()
+    public void ShowCatHidden()
     {
-        catIsHiddenText.gameObject.SetActive(!catIsHiddenText.gameObject.activeSelf);
+        catIsHiddenText.gameObject.SetActive(true);
+    }
+
+    public void HideCatHidden()
+    {
+        catIsHiddenText.gameObject.SetActive(false);
     }
 
     public void UpdateScore(int score)
@@ -297,19 +307,19 @@ public class UI : MonoBehaviour
         scoreBoardStrings = new List<string>();
         for (int i = 0; i < tempList.Count; ++i)
         {
-            goalBoard += tempList[i].x + ". " + wispNames[tempList[i].y] + "...........\n";
+            goalBoard += tempList[i].x + ". " + wispNames[tempList[i].y] + "...\n";
             scoreBoardStrings.Add(tempList[i].x + ". " + wispNames[tempList[i].y]);
         }
         //Animacja
         float counter = 0;
-        float baseTime = 1f;
+        float baseTime = 0.3f;
         int baseIndex = 0;
         string tempText = "";
         ghostScoreWindow.SetActive(true);
 
         while ( counter < baseTime)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.05f);
             counter += Time.deltaTime;
             baseIndex = (baseIndex + 1) % wispNames.Length;
             tempText = "";
@@ -323,7 +333,7 @@ public class UI : MonoBehaviour
 
         while (counter < 2* baseTime)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.05f);
             counter += Time.deltaTime;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length-1);
             tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n";
@@ -337,7 +347,7 @@ public class UI : MonoBehaviour
 
         while (counter < 3 * baseTime)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.05f);
             counter += Time.deltaTime;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length - 1);
             tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n" + tempList[1].x + ". " + wispNames[tempList[1].y] + "\n";
@@ -393,6 +403,7 @@ public class UI : MonoBehaviour
         enemyActionObject.SetActive(true);
         enemyActionInfo.text = newText;
         yield return new WaitForSeconds(lastTime);
+        if (newText == enemyActionInfo.text)
         enemyActionObject.SetActive(false);
 
     }
@@ -412,20 +423,22 @@ public class UI : MonoBehaviour
         lastTurnText.gameObject.SetActive(false);
     }
 
-    public IEnumerator ShowEnemyScoreRound(List <int> scoreArray)
+    public IEnumerator ShowEnemyScoreRound(List <int> scoreArray, int oldTotalSum)
     {
+        yield return new WaitForSeconds(1);
         ghostScoreWindow.SetActive(true);
         int runda = gameManager.round - 1;
         for (int i =0; i < 7; ++i)
         {
             yield return new WaitForSeconds(1);
-            string tempText = "1   2   3";
+            string tempText = "1    2    3";
             for (int j = 0;  j < scoreArray.Count; ++j)
             {
                 if (j % 3 == 0) tempText += "\n";
                 if (j % 3 < runda || (j % 3 == runda && j/3 < i) || ( i==6 && j == 15))
                 {
                     int x = scoreArray[j];
+                    if (j == 15 & i != 6) x = oldTotalSum;
                     if (x < 10)
                     {
                         tempText += "[ " + x + " ]";
@@ -449,5 +462,18 @@ public class UI : MonoBehaviour
         }
         yield return new WaitForSeconds(3);
         ghostScoreWindow.SetActive(false);
+        yield return new WaitForSeconds(1);
+        if (gameManager.round == 3) gameManager.GameOver();
+        else gameManager.PrepareCatToMove();
     }
+
+    public void ShowGameOverWindow(int myScore, int enemyScore)
+    {
+        GameOverWin.SetActive(myScore > enemyScore);
+        GameOverLose.SetActive(myScore < enemyScore);
+        GameOverTie.SetActive(myScore == enemyScore);
+        GameOverScores.text = myScore + "p. vs " + enemyScore + "p.";
+        GameOverWindow.SetActive(true);
+    }
+
 }

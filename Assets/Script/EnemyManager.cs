@@ -99,7 +99,7 @@ public class EnemyManager : MonoBehaviour
                 choosePool = new List<GameObject>();
                 gameManager.DealNewWisps();
                 yield return new WaitForSeconds(2);
-                userInterface.EnemyActionUpdate("Za mało duszków! Duch wezwał nową porcję...", 3);
+                StartCoroutine(userInterface.EnemyActionUpdate("Za mało duszków! Duch wezwał nową porcję...", 3));
                 yield return new WaitForSeconds(2);
             }
             else if (pondTiles[i] != null)
@@ -142,19 +142,16 @@ public class EnemyManager : MonoBehaviour
         pondTiles[enemyPondIndex] = null;
         enemyPondIndex = newIndex;
         pondTiles[enemyPondIndex] = enemyTile;
+        enemyTile.transform.position = gameManager.GetPlatformPosition(enemyPondIndex) + new Vector3(0,0.1f,0);
 
         
         gameManager.NextPlayer(currentFireflies.Count == 0);
 
-        if (currentFireflies.Count == 0)
-        {
-            print("GHOST SCORE: " + GetScore());
-        }
         yield return new WaitForSeconds(1);
         userInterface.UpdateGhostScore(collectedWisps, chosenWisp);
     }
 
-    public int GetScore()
+    int GetSimpleScore()
     {
         for (int i = 0; i < collectedWisps.Count; ++i)
         {
@@ -163,8 +160,15 @@ public class EnemyManager : MonoBehaviour
         return score;
     }
 
+    public int GetFinalScore()
+    {
+        if (scoreArray.Count < 16) return GetSimpleScore();
+        return scoreArray[15];
+    }
+
     public void ScoreRound()
     {
+        
         if (scoreArray.Count == 0)
         {
             for (int i = 0; i < 16; ++i)
@@ -172,6 +176,7 @@ public class EnemyManager : MonoBehaviour
                 scoreArray.Add(0);
             }
         }
+        int oldTotalSum = scoreArray[15];
         int round = gameManager.round -1;
         for (int i = 0; i < collectedWisps.Count; ++i)
         {
@@ -183,7 +188,7 @@ public class EnemyManager : MonoBehaviour
         string g = "";
         for (int i = 0; i < scoreArray.Count; ++i) g += scoreArray[i] + ", ";
         Debug.Log(g);
-        StartCoroutine(userInterface.ShowEnemyScoreRound(scoreArray));
+        StartCoroutine(userInterface.ShowEnemyScoreRound(scoreArray, oldTotalSum));
     }
 
     void Start()
