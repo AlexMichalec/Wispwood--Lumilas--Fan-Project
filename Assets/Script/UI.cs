@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem.Android;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI.Table;
+
 public class UI : MonoBehaviour
 {
 
@@ -14,8 +17,11 @@ public class UI : MonoBehaviour
     public GameObject MenuPanel;
     public GameObject StepOne;
     public GameObject CatTilePrefab;
+    public GameObject enemyTilePrefab;
     public Material[] CatMaterials;
     public Material[] CatMaterialsHidden;
+    public Slider difficultySlider;
+    public TextMeshProUGUI difficultyMultipliersText;
 
     [Header("Scoring - UI")]
     public TextMeshProUGUI scoreText;
@@ -40,12 +46,14 @@ public class UI : MonoBehaviour
     public GameObject dealNewWispsButton;
     public GameObject CatActionWispsButton;
     public GameObject CatActionsShapesButton;
+    public GameObject PeekForestButton;
 
     [Header("Forest - UI")]
     public GameObject ArrowButtons;
     public GameObject ArrowForShapesButtons;
     public GameObject treeTurnActions;
     public TextMeshProUGUI treeCounter;
+    public GameObject BackToPondButton;
     private int treeCounterInt = 0;
 
     [Header("Single Player")]
@@ -74,6 +82,7 @@ public class UI : MonoBehaviour
     public GridManager gridManager;
     public Score scoreManager;
     public MoveCamera cameraMover;
+    public EnemyManager enemyManager;
 
 
     void Start()
@@ -100,9 +109,12 @@ public class UI : MonoBehaviour
     {
         if (CatMaterials.Length == 0) return;
         int index = materialIndex % CatMaterials.Length;
-        int index2 = materialIndex % CatMaterialsHidden.Length;
         CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
-        CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index2];
+        CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index];
+        int indexEnemy = UnityEngine.Random.Range(0, CatMaterials.Count());
+        while(indexEnemy == index) indexEnemy = UnityEngine.Random.Range(0, CatMaterials.Count());
+        enemyTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[indexEnemy];
+        enemyTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[indexEnemy];
         gridManager.resetCat();
         gameManager.StartGame();
     }
@@ -117,7 +129,7 @@ public class UI : MonoBehaviour
             {
                 scoreMethodDropdowns[i].AddOptions(new List<string> { Score.GetInfoScoreMethods(i + 1, j)[0] });
             }
-            scoreMethodDropdowns[i].value = Random.Range(1, 6);
+            scoreMethodDropdowns[i].value = UnityEngine.Random.Range(1, 6);
         }
 
         scoreMethodDropdowns[4].AddOptions(new List<string> { Score.GetInfoScoreMethods(5, 6)[0] });
@@ -307,8 +319,8 @@ public class UI : MonoBehaviour
         scoreBoardStrings = new List<string>();
         for (int i = 0; i < tempList.Count; ++i)
         {
-            goalBoard += tempList[i].x + ". " + wispNames[tempList[i].y] + "...\n";
-            scoreBoardStrings.Add(tempList[i].x + ". " + wispNames[tempList[i].y]);
+            goalBoard += tempList[i].x + "p. " + wispNames[tempList[i].y] + "...\n";
+            scoreBoardStrings.Add(tempList[i].x + "p. " + wispNames[tempList[i].y]);
         }
         //Animacja
         float counter = 0;
@@ -326,7 +338,7 @@ public class UI : MonoBehaviour
             for (int i = 0; i < tempList.Count; ++i)
             {
                 int j = (baseIndex + i)%tempList.Count;
-                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+                tempText += tempList[i].x + "p. " + wispNames[tempList[j].y] + "\n";
             }
             ghostScoreboard.text = tempText;
         }
@@ -336,11 +348,11 @@ public class UI : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             counter += Time.deltaTime;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length-1);
-            tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n";
+            tempText = tempList[0].x + "p. " + wispNames[tempList[0].y] + "\n";
             for (int i = 1; i < tempList.Count; ++i)
             {
                 int j = 1 + (baseIndex + i) % (wispNames.Length - 1);
-                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+                tempText += tempList[i].x + "p. " + wispNames[tempList[j].y] + "\n";
             }
             ghostScoreboard.text = tempText;
         }
@@ -350,11 +362,11 @@ public class UI : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             counter += Time.deltaTime;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length - 1);
-            tempText = tempList[0].x + ". " + wispNames[tempList[0].y] + "\n" + tempList[1].x + ". " + wispNames[tempList[1].y] + "\n";
+            tempText = tempList[0].x + "p. " + wispNames[tempList[0].y] + "\n" + tempList[1].x + "p. " + wispNames[tempList[1].y] + "\n";
             for (int i = 2; i < tempList.Count; ++i)
             {
                 int j = 1 + (baseIndex + i) % (wispNames.Length - 1);
-                tempText += tempList[i].x + ". " + wispNames[tempList[j].y] + "\n";
+                tempText += tempList[i].x + "p. " + wispNames[tempList[j].y] + "\n";
             }
             ghostScoreboard.text = tempText;
         }
@@ -416,11 +428,24 @@ public class UI : MonoBehaviour
     public void ShowLastTurn()
     {
         lastTurnText.gameObject.SetActive(true);
+        StartCoroutine(AnimateLastTurn());
     }
 
     public void HideLastTurn()
     {
         lastTurnText.gameObject.SetActive(false);
+    }
+
+    IEnumerator AnimateLastTurn()
+    {
+        while (lastTurnText.IsActive())
+        {
+            yield return new WaitForSeconds(0.5f);
+            lastTurnText.color = Color.deepSkyBlue;
+            yield return new WaitForSeconds(0.5f);
+            lastTurnText.color = Color.white;
+        }
+        
     }
 
     public IEnumerator ShowEnemyScoreRound(List <int> scoreArray, int oldTotalSum)
@@ -441,7 +466,7 @@ public class UI : MonoBehaviour
                     if (j == 15 & i != 6) x = oldTotalSum;
                     if (x < 10)
                     {
-                        tempText += "[ " + x + " ]";
+                        tempText += "[  " + x + "]";
                     }
                     else if (x < 100)
                     {
@@ -474,6 +499,32 @@ public class UI : MonoBehaviour
         GameOverTie.SetActive(myScore == enemyScore);
         GameOverScores.text = myScore + "p. vs " + enemyScore + "p.";
         GameOverWindow.SetActive(true);
+    }
+
+    public void PeekYourForest()
+    {
+        HidePondActions();
+        cameraMover.changePosition();
+        Invoke("ShowBackButton", 1f);
+    }
+
+    public void GoBackToPond()
+    {
+        BackToPondButton.SetActive(false);
+        cameraMover.changePosition();
+        Invoke("ShowPondActions", 1f);
+    }
+
+    public void ShowBackButton()
+    {
+        BackToPondButton.SetActive(true);
+    }
+
+    public void UpdateWispsMultipliers()
+    {
+        enemyManager.difficultyLevel = (int) difficultySlider.value;
+        string[] textArray = {"6, 5, 4, 3", "7, 6, 5, 4", "8, 6, 5, 4", "9, 7, 6, 5"};
+        difficultyMultipliersText.text = textArray[(int) difficultySlider.value];
     }
 
 }

@@ -289,33 +289,33 @@ public class Score : MonoBehaviour
         {
             for (int j = 0; j < gridList.Count; ++j)
             {
-                if (gridList[i][j] == 1)
+                if (gridList[i][j] == 2)
                 {
-                    if ((i+1<gridList.Count && gridList[i + 1][j] == 1))
+                    if ((i+1<gridList.Count && gridList[i + 1][j] == 2))
                     {
                         //[.][X][.]
                         //[X][D][X]
                         //[X][D][X]
                         //[.][X][.]
-                        if ((i - 1 >= 0) && gridList[i - 1][j] == 1) continue;
-                        if ((j - 1 >= 0) && gridList[i][j - 1] == 1) continue;
-                        if ((j + 1 < gridList[i].Count) && gridList[i][j + 1] == 1) continue;
-                        if ((j - 1 >= 0) && gridList[i + 1][j - 1] == 1) continue;
-                        if ((j + 1 < gridList[i].Count) && gridList[i + 1][j + 1] == 1) continue;
-                        if ((i + 2 < gridList.Count) && gridList[i + 2][j] == 1) continue;
+                        if ((i - 1 >= 0) && gridList[i - 1][j] == 2) continue;
+                        if ((j - 1 >= 0) && gridList[i][j - 1] == 2) continue;
+                        if ((j + 1 < gridList[i].Count) && gridList[i][j + 1] == 2) continue;
+                        if ((j - 1 >= 0) && gridList[i + 1][j - 1] == 2) continue;
+                        if ((j + 1 < gridList[i].Count) && gridList[i + 1][j + 1] == 2) continue;
+                        if ((i + 2 < gridList.Count) && gridList[i + 2][j] == 2) continue;
                         counter++;
                     }
-                    else if ((j + 1 < gridList[i].Count && gridList[i][j + 1] == 1))
+                    else if ((j + 1 < gridList[i].Count && gridList[i][j + 1] == 2))
                     {
                         //[.][X][X][.]
                         //[X][D][D][X]
                         //[.][X][X][.]
-                        if ((i - 1 >= 0) && gridList[i - 1][j] == 1) continue;
-                        if ((i - 1 >= 0) && gridList[i - 1][j + 1] == 1) continue;
-                        if ((j - 1 >= 0) && gridList[i][j - 1] == 1) continue;
-                        if ((j + 2 < gridList[i].Count) && gridList[i][j + 2] == 1) continue;
-                        if ((i + 1 < gridList.Count) && gridList[i + 1][j] == 1) continue;
-                        if ((i + 1 < gridList.Count) && gridList[i + 1][j + 1] == 1) continue;
+                        if ((i - 1 >= 0) && gridList[i - 1][j] == 2) continue;
+                        if ((i - 1 >= 0) && gridList[i - 1][j + 1] == 2) continue;
+                        if ((j - 1 >= 0) && gridList[i][j - 1] == 2) continue;
+                        if ((j + 2 < gridList[i].Count) && gridList[i][j + 2] == 2) continue;
+                        if ((i + 1 < gridList.Count) && gridList[i + 1][j] == 2) continue;
+                        if ((i + 1 < gridList.Count) && gridList[i + 1][j + 1] == 2) continue;
                         counter++;
                     }
                     

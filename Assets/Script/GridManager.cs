@@ -63,7 +63,6 @@ public class GridManager : MonoBehaviour
     {
         InitializeGrid();
         moveCenter = distanceBetweenTiles / 20.0f;
-        Debug.Log("MC " + moveCenter);
         StartCoroutine(lateUpdateChoiceTile());
 
     }
@@ -363,7 +362,6 @@ public class GridManager : MonoBehaviour
         Vector2 chosenPlace = potentialPlaces[Random.Range(0, potentialPlaces.Count)];
         AddNewTile(chosenPlace, newTile, gridTileIndex, usedTile);
         //7. wycentruj fizyczną wersję
-        printInnerGrid();
         //8* zobacz czy zapełniony?
 
 

@@ -20,22 +20,8 @@ public class MoveCamera : MonoBehaviour
     [Header("Navigation")]
     public UI userInterface;
     
-    [HideInInspector] //Old version
-    public int steps = 100;
+ 
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            changePosition();
-        }
-    }
 
     public void changePosition()
     {
@@ -62,15 +48,5 @@ public class MoveCamera : MonoBehaviour
 
     }
 
-    IEnumerator moveCameraOld()
-    {
-        Vector3 distance = transform.position - targetPositions[targetIndex];
-        for (int i = 0; i < steps; ++i)
-        {
-            yield return new WaitForSeconds(fullTime / steps);
-            transform.position -= distance / steps;
-        }
-        moving = false;
-        if (targetIndex == 1) userInterface.ShowPondActions();
-    }
+
 }

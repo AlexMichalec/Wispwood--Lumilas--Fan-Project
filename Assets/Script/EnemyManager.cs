@@ -49,7 +49,7 @@ public class EnemyManager : MonoBehaviour
     public void SetWispsMultipliers()
     {
         ResetCollectedWisps();
-        List<List<int>> wispsMultipliersTemplate = new List<List<int>> { new List<int> {6, 5, 4, 3}, new List<int> {7, 6, 5 ,4}, new List<int> { 8, 6, 5, 4 }, new List<int> { 9, 7, 6, 4 } };
+        List<List<int>> wispsMultipliersTemplate = new List<List<int>> { new List<int> {6, 5, 4, 3}, new List<int> {7, 6, 5 ,4}, new List<int> { 8, 6, 5, 4 }, new List<int> { 9, 7, 6, 5 } };
         wispMultipliers = wispsMultipliersTemplate[difficultyLevel];
         for (int _ = 0; _ < 20; ++_)
         {
@@ -58,7 +58,7 @@ public class EnemyManager : MonoBehaviour
             (wispMultipliers[a], wispMultipliers[b]) = (wispMultipliers[b], wispMultipliers[a]);
         }
         wispDict = new Dictionary<int, int>();
-        wispsMultipliersTemplate = new List<List<int>> { new List<int> { 6, 5, 4, 3 }, new List<int> { 7, 6, 5, 4 }, new List<int> { 8, 6, 5, 4 }, new List<int> { 9, 7, 6, 4 } };
+        wispsMultipliersTemplate = new List<List<int>> { new List<int> { 6, 5, 4, 3 }, new List<int> { 7, 6, 5, 4 }, new List<int> { 8, 6, 5, 4 }, new List<int> { 9, 7, 6, 5 } };
 
         for (int i =0; i < wispMultipliers.Count; ++i)
         {
@@ -74,7 +74,7 @@ public class EnemyManager : MonoBehaviour
 
     public void SpawnEnemy(Vector3 pos, int index)
     {
-        enemyTile = Instantiate(enemyTilePrefab, pos, enemyTilePrefab.transform.rotation);
+        enemyTile = Instantiate(enemyTilePrefab, pos, enemyTilePrefab.transform.rotation*Quaternion.Euler(0,180,0));
         pondTiles = gameManager.GetPondTiles();
         pondTiles[index] = enemyTile;
         enemyPondIndex = index;
@@ -133,7 +133,7 @@ public class EnemyManager : MonoBehaviour
             tCounter += Time.deltaTime;
             yield return null;
         }
-        enemyTile.transform.rotation = Quaternion.Euler(0, 0, 0);
+        enemyTile.transform.rotation = Quaternion.Euler(0, 180, 0);
 
         gameManager.DarkOut(choosePool);
         int newIndex = pondTiles.IndexOf(chosenTile);

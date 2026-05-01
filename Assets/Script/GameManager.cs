@@ -137,18 +137,25 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < tileAmount; i++)
             {
-                if (i%(tileAmount/stacksAmount) == 0) yield return new WaitForSeconds(0.05f);
+                int tilesInOneStack = tileAmount / stacksAmount;
+                if ((i % tilesInOneStack) == 0 && i!=0)
+                {
+
+                    yield return new WaitForSeconds(.1f);
+                }
                 int colorIndex = colorList[i];
-                int stackIndex = i / (tileAmount / stacksAmount);
+                
+                if (tileAmount % stacksAmount != 0) tilesInOneStack += 1;
+                int stackIndex = i / (tilesInOneStack);
                 float stackAngle = stackIndex * (360.0f / stacksAmount);
-                float tileHeight = 0.2f + intervalBetweenTiles * (i - stackIndex * (tileAmount / stacksAmount));
+                float tileHeight = 0.1f + intervalBetweenTiles * (i%(tilesInOneStack));
                // Debug.Log(i+ " "+ stackIndex+ " "+ stackAngle);
-                Quaternion tileRotation = Quaternion.Euler(0, stackAngle, 180);
+                Quaternion tileRotation = Quaternion.Euler(0, Random.Range(0,360), 180);
 
                 Vector3 tilePosition = Quaternion.Euler(0, stackAngle, 0) * new Vector3(radius, tileHeight ,0);
                 GameObject newTile = Instantiate(tilePrefabs[colorIndex], tilePosition, tileRotation);
-                tileStacks[stackIndex%tileStacks.Count].Add(newTile);
-
+                tileStacks[stackIndex].Add(newTile);
+                newTile.GetComponent<TileScript>().spawnNumber = i;
             }
         }
 
@@ -253,13 +260,12 @@ public class GameManager : MonoBehaviour
 
    public IEnumerator PondFlipAll()
     {
-        
         for (int i = 0; i < pondTiles.Count; i++)
         {
             if (pondTiles[i] != null && pondTiles[i].GetComponent<TileScript>().isEnemy) continue;
             Destroy(pondTiles[i]); 
         }
-
+        yield return new WaitForEndOfFrame();
         if (pondTiles.Count == 0) pondTiles = new List<GameObject> { null, null, null, null, null, null, null, null };
 
         for (int i = 0; i < spawnPlatforms.Length; i++)
@@ -433,7 +439,6 @@ public class GameManager : MonoBehaviour
 
     public void NextPlayer(bool lastTurn = false)
     {
-        print("KLIK?");
         isEnemyTurn = !isEnemyTurn;
         if (lastTurn) userInterface.ShowLastTurn();
         if (isEnemyTurn)
@@ -464,7 +469,10 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            GameOver();
+            for (int i = 0; i <tileStacks.Count; ++i)
+            {
+                tileStacks[i][tileStacks[i].Count - 1].GetComponent<Renderer>().material.color = Color.red;
+            }
         }
     }
 
