@@ -2,7 +2,6 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using UnityEngine.InputSystem.Android;
 
 public class MoveCamera : MonoBehaviour
 {

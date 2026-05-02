@@ -8,7 +8,8 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 {
     public string tooltipHeader;
     public string tooltipContent;
-    private bool isMouseIn = false;
+    [HideInInspector]
+    public bool isMouseIn = false;
     public void OnPointerEnter(PointerEventData eventData)
     {
         isMouseIn = true;
@@ -30,6 +31,18 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private void OnDisable()
     {
         if (!isMouseIn) return;
+        isMouseIn = false;
+        TooltipSystem.Hide();
+    }
+
+    private void OnMouseEnter()
+    {
+        isMouseIn = true;
+        StartCoroutine(delayShowTiptool());
+    }
+
+    private void OnMouseExit()
+    {
         isMouseIn = false;
         TooltipSystem.Hide();
     }

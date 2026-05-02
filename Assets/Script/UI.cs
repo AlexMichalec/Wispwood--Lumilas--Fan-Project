@@ -1,13 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using TMPro.EditorUtilities;
 using UnityEngine;
-using UnityEngine.InputSystem.Android;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class UI : MonoBehaviour
 {

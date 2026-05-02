@@ -7,10 +7,12 @@ public class TileScript : MonoBehaviour
     public int pondIndex;
     public bool isEnemy = false;
     public int spawnNumber = 0;
+    private Color oldColor = new Color(0, .203f, .487f);
+    private GameManager gameManager;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -27,9 +29,23 @@ public class TileScript : MonoBehaviour
 
     private void OnMouseDown()
     {
-        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (!inPond || !gameManager.inputEnabled) return;
         gameObject.GetComponentInChildren<ParticleSystem>().Stop();
         gameManager.ChooseWisp(gameObject);
+        GetComponent<Renderer>().material.color = oldColor;
     }
+
+    private void OnMouseEnter()
+    {
+        if (!inPond || !gameManager.inputEnabled) return;
+        oldColor = GetComponent<Renderer>().material.color;
+        GetComponent<Renderer>().material.color = Color.deepSkyBlue;
+    }
+
+    private void OnMouseExit()
+    {
+        if (!inPond || !gameManager.inputEnabled) return;
+        GetComponent<Renderer>().material.color = oldColor;
+    }
+
 }

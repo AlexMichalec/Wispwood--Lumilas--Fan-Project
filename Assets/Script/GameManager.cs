@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.LowLevelPhysics2D.PhysicsShape;
 
 public class GameManager : MonoBehaviour
 {
@@ -443,6 +441,7 @@ public class GameManager : MonoBehaviour
         if (lastTurn) userInterface.ShowLastTurn();
         if (isEnemyTurn)
         {
+            inputEnabled = false;
             userInterface.HideTreeTurnActions();
             userInterface.HideArrows();
             cameraMover.changePosition();
@@ -505,4 +504,10 @@ public class GameManager : MonoBehaviour
     {
         userInterface.ShowGameOverWindow(gridManager.myScore.myScore, enemyManager.GetFinalScore());
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 }
+

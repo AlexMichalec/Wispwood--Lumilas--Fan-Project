@@ -63,7 +63,7 @@ public class GridManager : MonoBehaviour
     {
         InitializeGrid();
         moveCenter = distanceBetweenTiles / 20.0f;
-        StartCoroutine(lateUpdateChoiceTile());
+        //StartCoroutine(lateUpdateChoiceTile());
 
     }
 
@@ -929,7 +929,6 @@ public class GridManager : MonoBehaviour
 
     void Update()
     {
-        if (treeTurnCounter >= 3) return;
         if (currentShape != null) return;
 
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))

@@ -503,7 +503,7 @@ public class Shape : MonoBehaviour
         {
             ButtonManager(4);
         }
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             ButtonManager(8);
         }
@@ -522,6 +522,10 @@ public class Shape : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             ButtonManager(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ButtonManager(9);
         }
 
 

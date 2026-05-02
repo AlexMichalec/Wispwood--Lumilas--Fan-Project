@@ -1,9 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using System.Threading.Tasks;
-using System.Diagnostics.Tracing;
-using UnityEngine.Rendering.LookDev;
 
 public class EnemyManager : MonoBehaviour
 {
