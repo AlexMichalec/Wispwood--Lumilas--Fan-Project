@@ -65,6 +65,7 @@ public class UI : MonoBehaviour
     private List<string> scoreBoardStrings;
     private List<Vector2Int> scoreBoardList;
     private string[] wispNames = { "Dynia  ", "Serce  ", "Wiedźma", "Ognik  " };
+    private bool skipScoringAnimation = false;
 
     [Header("Game Over Screen")]
     public GameObject GameOverWindow;
@@ -320,15 +321,16 @@ public class UI : MonoBehaviour
         }
         //Animacja
         float counter = 0;
-        float baseTime = 0.3f;
+        float baseTime = 0.8f;
         int baseIndex = 0;
         string tempText = "";
+        skipScoringAnimation = false;
         ghostScoreWindow.SetActive(true);
 
-        while ( counter < baseTime)
+        while ( counter < baseTime && !skipScoringAnimation)
         {
             yield return new WaitForSeconds(0.05f);
-            counter += Time.deltaTime;
+            counter += Time.deltaTime + 0.05f;
             baseIndex = (baseIndex + 1) % wispNames.Length;
             tempText = "";
             for (int i = 0; i < tempList.Count; ++i)
@@ -339,10 +341,10 @@ public class UI : MonoBehaviour
             ghostScoreboard.text = tempText;
         }
 
-        while (counter < 2* baseTime)
+        while (counter < 2* baseTime && !skipScoringAnimation)
         {
             yield return new WaitForSeconds(0.05f);
-            counter += Time.deltaTime;
+            counter += Time.deltaTime + 0.05f;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length-1);
             tempText = tempList[0].x + "p. " + wispNames[tempList[0].y] + "\n";
             for (int i = 1; i < tempList.Count; ++i)
@@ -353,10 +355,10 @@ public class UI : MonoBehaviour
             ghostScoreboard.text = tempText;
         }
 
-        while (counter < 3 * baseTime)
+        while (counter < 3 * baseTime && !skipScoringAnimation)
         {
             yield return new WaitForSeconds(0.05f);
-            counter += Time.deltaTime;
+            counter += Time.deltaTime + 0.05f;
             baseIndex = 1 + (baseIndex + 1) % (wispNames.Length - 1);
             tempText = tempList[0].x + "p. " + wispNames[tempList[0].y] + "\n" + tempList[1].x + "p. " + wispNames[tempList[1].y] + "\n";
             for (int i = 2; i < tempList.Count; ++i)
@@ -371,9 +373,10 @@ public class UI : MonoBehaviour
         ghostScoreboard.text = goalBoard;
         
         ghostButton.SetActive(false);
-        yield return new WaitForSeconds(2);
+        if (!skipScoringAnimation) yield return new WaitForSeconds(2);
         ghostScoreWindow.SetActive(false);
         ghostButton.SetActive(true);
+        skipScoringAnimation = false;
         StartCoroutine(gameManager.FirstEnemyMoveRound());
     }
 
@@ -446,12 +449,14 @@ public class UI : MonoBehaviour
 
     public IEnumerator ShowEnemyScoreRound(List <int> scoreArray, int oldTotalSum)
     {
-        yield return new WaitForSeconds(1);
+        skipScoringAnimation = false;
+        //yield return new WaitForSeconds(1);
         ghostScoreWindow.SetActive(true);
         int runda = gameManager.round - 1;
         for (int i =0; i < 7; ++i)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.8f);
+            if (skipScoringAnimation) i = 6;
             string tempText = "1    2    3";
             for (int j = 0;  j < scoreArray.Count; ++j)
             {
@@ -481,9 +486,13 @@ public class UI : MonoBehaviour
             ghostScoreboardRight.text = tempText;
 
         }
-        yield return new WaitForSeconds(3);
-        ghostScoreWindow.SetActive(false);
-        yield return new WaitForSeconds(1);
+        if (!skipScoringAnimation)
+        {
+            yield return new WaitForSeconds(2);
+            ghostScoreWindow.SetActive(false);
+            yield return new WaitForSeconds(1);
+        }
+        skipScoringAnimation = false;
         if (gameManager.round == 3) gameManager.GameOver();
         else gameManager.PrepareCatToMove();
     }
@@ -519,8 +528,13 @@ public class UI : MonoBehaviour
     public void UpdateWispsMultipliers()
     {
         enemyManager.difficultyLevel = (int) difficultySlider.value;
-        string[] textArray = {"6, 5, 4, 3", "7, 6, 5, 4", "8, 6, 5, 4", "9, 7, 6, 5"};
+        string[] textArray = {"6, 5, 4, 3", "8, 6, 5, 3", "8, 7, 5, 4", "8, 7, 6, 5"};
         difficultyMultipliersText.text = textArray[(int) difficultySlider.value];
+    }
+
+    public void SkipEnemyScoreAnimation()
+    {
+        skipScoringAnimation = true;
     }
 
 }

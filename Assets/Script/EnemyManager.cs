@@ -46,7 +46,7 @@ public class EnemyManager : MonoBehaviour
     public void SetWispsMultipliers()
     {
         ResetCollectedWisps();
-        List<List<int>> wispsMultipliersTemplate = new List<List<int>> { new List<int> {6, 5, 4, 3}, new List<int> {7, 6, 5 ,4}, new List<int> { 8, 6, 5, 4 }, new List<int> { 9, 7, 6, 5 } };
+        List<List<int>> wispsMultipliersTemplate = new List<List<int>> { new List<int> {6, 5, 4, 3}, new List<int> {8, 6, 5 ,3}, new List<int> { 8, 7, 5, 4 }, new List<int> { 8, 7, 6, 5 } };
         wispMultipliers = wispsMultipliersTemplate[difficultyLevel];
         for (int _ = 0; _ < 20; ++_)
         {

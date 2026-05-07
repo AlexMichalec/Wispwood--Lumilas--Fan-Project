@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
     public int maxDimension = 4;
     public float distanceBetweenTiles = 0.4f;
     public float spawnHeight = 0.1f;
+    public float spawnHeightChoice = 0.1f;
     public bool movingCat = false;
     public bool isLastTurn = false;
 
@@ -175,7 +176,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x + 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x - distanceBetweenTiles,
-                0.01f, otherTile.transform.position.z);
+                spawnHeightChoice, otherTile.transform.position.z);
             nearChoiceLocation = new Vector2(pt_x + 1, pt_y);
             return;
         }
@@ -184,7 +185,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x - 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x + distanceBetweenTiles,
-                0.01f, otherTile.transform.position.z);
+                spawnHeightChoice, otherTile.transform.position.z);
             nearChoiceLocation = new Vector2(pt_x - 1, pt_y);
             return;
         }
@@ -193,7 +194,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x][pt_y - 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
-                0.01f, otherTile.transform.position.z + distanceBetweenTiles);
+                spawnHeightChoice, otherTile.transform.position.z + distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y - 1);
             return;
         }
@@ -202,7 +203,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x][pt_y + 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
-                0.01f, otherTile.transform.position.z - distanceBetweenTiles);
+                spawnHeightChoice, otherTile.transform.position.z - distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y + 1);
             return;
         }
@@ -211,7 +212,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x - 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x + distanceBetweenTiles,
-                0.01f, otherTile.transform.position.z);
+                spawnHeightChoice, otherTile.transform.position.z);
             nearChoiceLocation = new Vector2(pt_x - 1, pt_y);
             return;
         }
@@ -220,7 +221,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x + 1][pt_y];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x - distanceBetweenTiles,
-                0.01f, otherTile.transform.position.z);
+                spawnHeightChoice, otherTile.transform.position.z);
             nearChoiceLocation = new Vector2(pt_x + 1, pt_y);
             return;
         }
@@ -229,7 +230,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x][pt_y - 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
-                0.01f, otherTile.transform.position.z + distanceBetweenTiles);
+                spawnHeightChoice, otherTile.transform.position.z + distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y - 1);
             return;
         }
@@ -238,7 +239,7 @@ public class GridManager : MonoBehaviour
         {
             GameObject otherTile = gridList2[pt_x][pt_y + 1];
             choiceTile.transform.position = new Vector3(otherTile.transform.position.x,
-                0.01f, otherTile.transform.position.z - distanceBetweenTiles);
+                spawnHeightChoice, otherTile.transform.position.z - distanceBetweenTiles);
             nearChoiceLocation = new Vector2(pt_x, pt_y + 1);
             return;
         }

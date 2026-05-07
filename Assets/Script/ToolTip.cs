@@ -10,23 +10,19 @@ public class ToolTip : MonoBehaviour
     public TextMeshProUGUI contentText;
     public LayoutElement layoutElement;
     public int charachterLimit = 80;
+    public float offsetUp = 15;
+    public float offsetDown = -15;
+
     
     void Awake()
     {
-        
+        rectTransform = GetComponent<RectTransform>();
     }
 
     public void SetText(string newHeader, string newContent)
     {
         rectTransform = GetComponent<RectTransform>();
-
-        Vector2 pos = Input.mousePosition;
-
-        float pivotX = pos.x / Screen.width;
-        float pivotY = pos.y / Screen.height;
-
-        rectTransform.pivot = new Vector2(pivotX, pivotY);
-        transform.position = pos;
+        UpdateTooltipPosition();
 
         headerText.text = newHeader;
         contentText.text = newContent;
@@ -37,6 +33,12 @@ public class ToolTip : MonoBehaviour
 
     private void Update()
     {
+        UpdateTooltipPosition();
+
+    }
+
+    private void UpdateTooltipPosition()
+    {
         Vector2 pos = Input.mousePosition;
 
         float pivotX = pos.x / Screen.width;
@@ -44,7 +46,6 @@ public class ToolTip : MonoBehaviour
 
         rectTransform.pivot = new Vector2(pivotX, pivotY);
         transform.position = pos;
-
+        transform.position += new Vector3(0, (pos.y < Screen.height / 2) ? offsetUp : offsetDown, 0);
     }
-
 }
