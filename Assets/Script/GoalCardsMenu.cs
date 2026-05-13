@@ -10,8 +10,12 @@ public class GoalCardsMenu : MonoBehaviour
     [SerializeField] GameObject spawningPoint;
     [SerializeField] GameObject savedPoint;
     public float spawnScale = 0.7f;
-    [SerializeField] float savedScale = 0.4f;
+    public float savedScale = 0.4f;
+    public float savedScaleBigger = 0.6f;
     public GameObject saveButton;
+    [SerializeField] List<Texture2D> gridImages;
+    [SerializeField] List<Sprite> pawsImages;
+    int[] cardsDifficulty = { 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 2};
 
     private int wispTypeIndex = -1;
     private List<GameObject> cardsList = new List<GameObject>();
@@ -56,8 +60,9 @@ public class GoalCardsMenu : MonoBehaviour
             rt.localScale = new Vector3(spawnScale, spawnScale, spawnScale);
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0f);
             rt.anchoredPosition = wispTypeIndex == 4 ? new Vector2(170 * i - 425, spawnY) : new Vector2(170 * i - 340, spawnY);
+            
 
             newCard.transform.position = new Vector3(newCard.transform.position.x, spawningPoint.transform.position.y - Screen.height/2, newCard.transform.position.z);
             
@@ -66,7 +71,7 @@ public class GoalCardsMenu : MonoBehaviour
             newCard.GetComponent<GoalCard>().Initialize(infoArray[0], infoArray[1],
                 (infoArray.Length==3) ? infoArray[2] : "", 
                 backgroundColors[wispTypeIndex], textBackgorundColors[wispTypeIndex], wispColors[wispTypeIndex],
-                i+1);
+                i+1, gridImages[wispTypeIndex * 5 + i], pawsImages[cardsDifficulty[wispTypeIndex * 5 + i]]);
             cardsList.Add(newCard);
             newCard.GetComponent<GoalCard>().menu = this;
         }
@@ -89,7 +94,7 @@ public class GoalCardsMenu : MonoBehaviour
             savedList.Add(upCard);
             indexList.Add(upCard.GetComponent<GoalCard>().methodIndex);
         }
-        upCard.GetComponent<GoalCard>().WaitAndAddToSaved(savedScale, savedPoint.transform.position + new Vector3( 100* wispTypeIndex,0,0));
+        upCard.GetComponent<GoalCard>().WaitAndAddToSaved(savedScale, savedPoint.transform.position + new Vector3( 160* wispTypeIndex,0,0));
     }
 
     public void SaveMethods()

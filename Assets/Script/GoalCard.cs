@@ -13,6 +13,7 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     [SerializeField] TextMeshProUGUI pointsText;
     [SerializeField] GameObject textBackground;
     [SerializeField] GameObject gridImage;
+    [SerializeField] Image pawsImage;
     public float animationTime = 1.0f;
     public float scalingTime = 0.3f;
     public float spawnInterval = 0.1f;
@@ -24,18 +25,21 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     //public ParticleSystem vfx;
     
 
-    public void Initialize(string title, string description, string points, Color background, Color txtBackground, Color wispColor, int mIndex)
+    public void Initialize(string title, string description, string points, Color background, Color txtBackground, Color wispColor, int mIndex, Texture2D gImage, Sprite pImage)
     {
         titleText.text = title;
         descriptionText.text = description;
         pointsText.text = points;
         GetComponent<Image>().color = background;
         textBackground.GetComponent<Image>().color = txtBackground;
-        //gridImage.GetComponent<RawImage>().color = wispColor;
+        gridImage.GetComponent<RawImage>().texture = gImage;
+        pawsImage.sprite = pImage;
         titleText.color = wispColor;
         methodIndex = mIndex;
-       // transform.position += new Vector3(0, Screen.height / 2, 0);
+        // transform.position += new Vector3(0, Screen.height / 2, 0);
         //toChoose = true;
+
+        gameObject.GetComponent<RectTransform>().pivot = new Vector2(transform.position.x / Screen.width, 0);
         StartCoroutine(InitAnimation());
         //vfx.startColor = wispColor;
         //vfx.Play();
@@ -102,18 +106,6 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         //Destroy(gameObject);
     }
 
-    private void OnMouseDown()
-    {
-        print("KLIKAM");
-        menu.GetOthersDown(gameObject);
-        GetUp();
-    }
-
-    private void OnMouseEnter()
-    {
-
-        print("IN");
-    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -125,12 +117,15 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        transform.SetAsLastSibling();
         if(toChoose) StartCoroutine(ScaleUp());
+        if (saved) StartCoroutine(ScaleUpSaved());
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         if (toChoose) StartCoroutine(ScaleDown());
+        if (saved) StartCoroutine(ScaleDownSaved());
     }
 
     public void WaitAndAddToSaved(float savedScale, Vector3 goalPosition)
@@ -141,10 +136,13 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     IEnumerator AddToSaved(float savedScale, Vector3 goalPosition)
     {
         yield return new WaitForSeconds(animationTime);
+
         Vector3 startPos = goalPosition + new Vector3(0, Screen.height / 2, 0);
+        transform.position = startPos;
+        gameObject.GetComponent<RectTransform>().pivot = new Vector2(transform.position.x/Screen.width, 1);
         float counter = 0f;
         transform.localScale = new Vector3(savedScale, savedScale, savedScale);
-        transform.position = startPos;
+        
         while (counter < animationTime / 2)
         {
             yield return null;
@@ -176,6 +174,35 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         float counter = 0;
         Vector3 startScale = transform.localScale;
         Vector3 goalScale = new Vector3(menu.spawnScale, menu.spawnScale, menu.spawnScale);
+        while (counter < scalingTime && !isMouseIn)
+        {
+            yield return null;
+            counter += Time.deltaTime;
+            float t = Mathf.Clamp01(counter / scalingTime);
+            transform.localScale = Vector3.Lerp(startScale, goalScale, t);
+        }
+    }
+
+    IEnumerator ScaleUpSaved()
+    {
+        isMouseIn = true;
+        float counter = 0;
+        Vector3 startScale = transform.localScale;
+        Vector3 goalScale = new Vector3(menu.savedScaleBigger, menu.savedScaleBigger, menu.savedScaleBigger);
+        while (counter < scalingTime && isMouseIn)
+        {
+            yield return null;
+            counter += Time.deltaTime;
+            float t = Mathf.Clamp01(counter / scalingTime);
+            transform.localScale = Vector3.Lerp(startScale, goalScale, t);
+        }
+    }
+    IEnumerator ScaleDownSaved()
+    {
+        isMouseIn = false;
+        float counter = 0;
+        Vector3 startScale = transform.localScale;
+        Vector3 goalScale = new Vector3(menu.savedScale, menu.savedScale, menu.savedScale);
         while (counter < scalingTime && !isMouseIn)
         {
             yield return null;
