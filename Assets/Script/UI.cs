@@ -537,4 +537,14 @@ public class UI : MonoBehaviour
         skipScoringAnimation = true;
     }
 
+    public void SetScoreMethods(List<int> methodsList)
+    {
+        foreach (int x in methodsList) print("P" + x);
+        for (int i = 0; i < methodsList.Count; ++i)
+        {
+            scoreMethodDropdowns[i].value = methodsList[i];
+            scoreManager.UpdateScoreMethod(i, methodsList[i]);
+        }
+    }
+
 }

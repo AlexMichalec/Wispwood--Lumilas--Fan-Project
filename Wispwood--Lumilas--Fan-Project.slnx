@@ -44,6 +44,7 @@
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
   <Project Path="Unity.Multiplayer.Center.Common.csproj" />
   <Project Path="Unity.InternalAPIEditorBridgeDev.001.csproj" />
+  <Project Path="Coffee.UIParticle.csproj" />
   <Project Path="Unity.InputSystem.ForUI.csproj" />
   <Project Path="Unity.AI.Navigation.csproj" />
   <Project Path="Unity.Collections.CodeGen.csproj" />
@@ -52,6 +53,7 @@
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="UnityEditor.UI.Analytics.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Coffee.UIParticle.Editor.csproj" />
   <Project Path="Unity.Play.Publisher.Editor.csproj" />
   <Project Path="Unity.Settings.Editor.csproj" />
   <Project Path="Unity.InputSystem.TestFramework.csproj" />
