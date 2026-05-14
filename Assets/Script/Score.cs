@@ -98,7 +98,7 @@ public class Score : MonoBehaviour
             if (methodIndex == 3) return new string[] { "Szukaj igły w stogu światła", "Którego rodzaju masz najmniej albo wcale? Każdy Ognik jest wart tyle punktów", "Ognik: 7, Dynia: 5, Wiedźma: 4, Serce: 3" };
             if (methodIndex == 4) return new string[] { "Energia - synergia", "Każdy Ognik jest wart tyle punktów co najmniej wartościowy rodzaj duszka obok niego.", "Ognik: 4, Dynia: 5, Wiedźma: 6, Serce: 7" };
             if (methodIndex == 5) return new string[] { "W stronę światła", "Każda grupa duszków z conajmniej 1 Ognikiem: 2 punkty za każdy rodzaj duszka w tej grupie." };
-            if (methodIndex == 6) return new string[] { "Płochliwy promyk", "Dla każdergo Ognika: Wybierz 1 grupę duszków, która dotyka tylko narożnika tego Ognika. 2 punkty za każdy rodzaj duszka w tej grupie." }; ;
+            if (methodIndex == 6) return new string[] { "Płochliwy promyk", "Dla każdego Ognika: Wybierz 1 grupę duszków, która dotyka tylko narożnika tego Ognika. 2 punkty za każdy rodzaj duszka w tej grupie." }; ;
         }
 
         if (wispType == 1)
@@ -106,8 +106,8 @@ public class Score : MonoBehaviour
             //TREES
             if (methodIndex == 0) return new string[] { "Empty Method", "No points (only Debug)" };
             if (methodIndex == 1) return new string[] { "Co trzy drzewa, to nie jedno", "2 punkty za każdy rząd i każdą kolumnę, w którch są conajmniej 3 Drzewa." };
-            if (methodIndex == 2) return new string[] { "Ciągnie drzewo do lasu", "# punkty za każde Drzewo, obok którego są conajmniej 3 drzewa." };
-            if (methodIndex == 3) return new string[] { "Jeden, by wszystkie posadzić", "1 punkt za każde Drzewo w największej grupie Drzew." };
+            if (methodIndex == 2) return new string[] { "Jeden, by wszystkie posadzić", "1 punkt za każde Drzewo w największej grupie Drzew." };
+            if (methodIndex == 3) return new string[] { "Ciągnie drzewo do lasu", "# punkty za każde Drzewo, obok którego są conajmniej 3 drzewa." };
             if (methodIndex == 4) return new string[] { "Im dalej w las...", "2 punkty za każde Drzewo w drugiej co do wielkości grupie Drzew." };
             if (methodIndex == 5) return new string[] { "Jak szyszka w kompot", "4 punkty za każdą grupę składającą się z conajmniej 3 Drzew." }; ;
         }
@@ -207,8 +207,8 @@ public class Score : MonoBehaviour
     {
         int subScore = 0;
         if (treeScoreMethodIndex == 1) subScore += ScoreTreesRowColumn();
-        if (treeScoreMethodIndex == 2) subScore += ScoreTreesAround();
-        if (treeScoreMethodIndex == 3) subScore += ScoreTreesBiggestGroup();
+        if (treeScoreMethodIndex == 2) subScore += ScoreTreesBiggestGroup();
+        if (treeScoreMethodIndex == 3) subScore += ScoreTreesAround();
         if (treeScoreMethodIndex == 4) subScore += ScoreTreesSecondBiggestGroup();
         if (treeScoreMethodIndex == 5) subScore += ScoreTreesGroupsBiggerThanThree();
         print("Trees score: " + subScore);
