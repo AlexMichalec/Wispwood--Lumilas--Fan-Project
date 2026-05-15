@@ -217,7 +217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4778668
 RectTransform:
   m_ObjectHideFlags: 0
@@ -977,7 +977,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1006,7 +1006,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -2203,7 +2203,6 @@ RectTransform:
   - {fileID: 1974214740}
   - {fileID: 907115020}
   - {fileID: 1380948316}
-  - {fileID: 1470210064}
   m_Father: {fileID: 575518655}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -4010,7 +4009,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -6472,11 +6471,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.3735848, g: 0.3735848, b: 0.3735848, a: 1}
+    m_NormalColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 0.5019608}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -6505,7 +6504,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -6624,7 +6623,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -8272,7 +8271,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -8655,6 +8654,7 @@ RectTransform:
   - {fileID: 1984951372}
   - {fileID: 993526331}
   - {fileID: 2077561173}
+  - {fileID: 1470210064}
   - {fileID: 187148056}
   m_Father: {fileID: 808890013}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9137,7 +9137,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -9166,7 +9166,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -10526,7 +10526,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -10795,7 +10795,7 @@ GameObject:
   - component: {fileID: 733926546}
   - component: {fileID: 733926545}
   m_Layer: 5
-  m_Name: SubTitle
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12180,6 +12180,131 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 777935461}
   m_CullTransparentMesh: 1
+--- !u!1001 &791073778
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1340387584}
+    m_Modifications:
+    - target: {fileID: 3750087076007876782, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: menu
+      value: 
+      objectReference: {fileID: 796487256}
+    - target: {fileID: 3750087076007876782, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 1200114621}
+    - target: {fileID: 8099885074424698243, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_Name
+      value: GoalCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 8099885074424698243, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 240
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 47.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -2.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
 --- !u!1 &791194140
 GameObject:
   m_ObjectHideFlags: 0
@@ -12367,6 +12492,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f053a0dbef30fb14f8ae9e6b9fa32245, type: 3}
   - {fileID: 21300000, guid: c2eee6d5836d77f428acf27f6298d752, type: 3}
   - {fileID: 21300000, guid: 6c177cc5ced107b489e5e284d8ee2113, type: 3}
+  cardsDifficulty: 0000000000000000010000000100000001000000000000000000000001000000010000000100000000000000000000000100000001000000010000000000000000000000010000000100000001000000000000000000000001000000010000000100000002000000
   wispTitles:
   - Drzewa
   - Dynie
@@ -12652,6 +12778,25 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 71ef490b613527c46bcf375dd13f5dc6, type: 2}
   difficultySlider: {fileID: 430780503}
   difficultyMultipliersText: {fileID: 634655148}
+  catsButtons:
+  - {fileID: 441810433}
+  - {fileID: 1674389187}
+  - {fileID: 1661825310}
+  - {fileID: 2005368080}
+  - {fileID: 1673413888}
+  - {fileID: 1947505650}
+  - {fileID: 52181900}
+  - {fileID: 610492361}
+  - {fileID: 853366108}
+  - {fileID: 1255422897}
+  - {fileID: 1575481975}
+  - {fileID: 1189002532}
+  ChooseCatTitle: {fileID: 733926545}
+  ChooseCatDesc: {fileID: 2024009153}
+  ghostColor: {r: 0.5109527, g: 0.24375218, b: 0.7735849, a: 1}
+  chooseColor: {r: 0.32941177, g: 0.62352943, b: 1, a: 1}
+  choosingGhostTime: 3
+  ghostStepTime: 0.15
   scoreText: {fileID: 94483122}
   scoreMethodDropdowns:
   - {fileID: 1651703392}
@@ -12680,6 +12825,7 @@ MonoBehaviour:
   - {fileID: 809526047}
   panelImage: {fileID: 2015843436}
   detailedScoreNode: {fileID: 1946773222}
+  goalCardGameplay: {fileID: 1909507699}
   catIsHiddenText: {fileID: 1215684164}
   topText: {fileID: 2134561752}
   nextRoundButton: {fileID: 1064795118}
@@ -12696,6 +12842,7 @@ MonoBehaviour:
   treeTurnActions: {fileID: 1924268643}
   treeCounter: {fileID: 2062283847}
   BackToPondButton: {fileID: 258041651}
+  undoArrow: {fileID: 1470210063}
   ghostButton: {fileID: 355179635}
   ghostScoreboard: {fileID: 1066020104}
   ghostScoreboardRight: {fileID: 830393950}
@@ -13670,7 +13817,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -13821,7 +13968,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -13850,7 +13997,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -15475,7 +15622,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -18732,7 +18879,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -18761,7 +18908,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -19265,7 +19412,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -19534,7 +19681,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -19563,7 +19710,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -20555,6 +20702,7 @@ RectTransform:
   - {fileID: 540236899}
   - {fileID: 1564488722}
   - {fileID: 809526049}
+  - {fileID: 1909507697}
   - {fileID: 97368195}
   m_Father: {fileID: 808890013}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -22184,16 +22332,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470210063}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1451593886}
-  m_Father: {fileID: 187148056}
+  m_Father: {fileID: 575518655}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 213, y: 40}
+  m_AnchoredPosition: {x: 213.7, y: 29.550009}
   m_SizeDelta: {x: 80, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1470210065
@@ -23151,7 +23299,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -23965,7 +24113,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -23994,7 +24142,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -24457,7 +24605,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -24925,7 +25073,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -25354,7 +25502,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -25383,7 +25531,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -25976,7 +26124,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -26005,7 +26153,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -26121,7 +26269,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -26150,7 +26298,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -28975,6 +29123,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1901180700}
   m_CullTransparentMesh: 1
+--- !u!224 &1909507697 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8566775412859004611, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+  m_PrefabInstance: {fileID: 791073778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1909507699 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3750087076007876782, guid: b5cf0dd9aca8e4c45a7b2c144e96e417, type: 3}
+  m_PrefabInstance: {fileID: 791073778}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2135892b93443d24eb951564a8d4ad02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalCard
 --- !u!1 &1924268643
 GameObject:
   m_ObjectHideFlags: 0
@@ -29119,7 +29283,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -29148,7 +29312,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -30446,7 +30610,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.33018857, g: 0.6218657, b: 1, a: 1}
     m_PressedColor: {r: 0.18679237, g: 0.43157378, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.37254903, g: 0.37254903, b: 0.37254903, a: 1}
     m_ColorMultiplier: 2.5
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -30475,7 +30639,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 808890009}
         m_TargetAssemblyTypeName: UI, Assembly-CSharp
@@ -30731,7 +30895,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 0.2
 --- !u!222 &2015843437
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30768,7 +30932,7 @@ GameObject:
   - component: {fileID: 2024009154}
   - component: {fileID: 2024009153}
   m_Layer: 5
-  m_Name: Multipliers Label (1)
+  m_Name: Sub Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31220,7 +31384,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.921, g: 0.921, b: 0.921, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}

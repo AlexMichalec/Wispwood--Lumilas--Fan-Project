@@ -5,18 +5,18 @@ using TMPro;
 public class GoalCardsMenu : MonoBehaviour
 {
     [SerializeField] GameObject cardPrefab;
-    [SerializeField] Color[] wispColors;
-    [SerializeField] Color[] backgroundColors;
-    [SerializeField] Color[] textBackgorundColors;
+    public Color[] wispColors;
+    public Color[] backgroundColors;
+    public Color[] textBackgorundColors;
     [SerializeField] GameObject spawningPoint;
     [SerializeField] GameObject savedPoint;
     public float spawnScale = 0.7f;
     public float savedScale = 0.4f;
     public float savedScaleBigger = 0.6f;
     public GameObject saveButton;
-    [SerializeField] List<Texture2D> gridImages;
-    [SerializeField] List<Sprite> pawsImages;
-    int[] cardsDifficulty = { 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 2};
+    public List<Texture2D> gridImages;
+    public List<Sprite> pawsImages;
+    public int[] cardsDifficulty = { 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 2};
     [SerializeField] string[] wispTitles;
     [SerializeField] string[] wispDescriptions;
     [SerializeField] TextMeshProUGUI wTitle;

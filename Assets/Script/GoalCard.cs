@@ -1,10 +1,9 @@
 
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -24,6 +23,7 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     public bool final = false;
     public int wispType;
     bool isMouseIn = false;
+    public Score scoreManager;
     //public ParticleSystem vfx;
     
 
@@ -285,5 +285,25 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             float t = Mathf.Clamp01(counter / scalingTime);
             transform.localScale = Vector3.Lerp(startScale, goalScale, t);
         }
+    }
+
+    public void ShowDuringGame(int wispIndex)
+    {
+        int mIndex = scoreManager.GetScoreMethodIndex(wispIndex);
+        string[] infoArray = Score.GetInfoScoreMethods(wispIndex + 1, mIndex);
+        int longIndex = wispIndex * 5 + mIndex - 1;
+
+        titleText.text = infoArray[0];
+        descriptionText.text = infoArray[1];
+        if (infoArray.Length == 3) pointsText.text = infoArray[2];
+        else pointsText.text = "";
+
+        GetComponent<Image>().color = menu.backgroundColors[wispIndex];
+        textBackground.GetComponent<Image>().color = menu.textBackgorundColors[wispIndex];
+        gridImage.GetComponent<RawImage>().texture = menu.gridImages[longIndex];
+        pawsImage.sprite = menu.pawsImages[menu.cardsDifficulty[longIndex]];
+        titleText.color = menu.wispColors[wispIndex];
+        methodIndex = mIndex;
+        wispType = wispIndex;
     }
 }

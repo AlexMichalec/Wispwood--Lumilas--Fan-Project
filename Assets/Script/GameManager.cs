@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        userInterface.ShowScoreMethod(5);
         userInterface.HideDealNewWisps();
         if (singlePlayer)
         {

@@ -54,6 +54,12 @@ public class Score : MonoBehaviour
         if (scoreType == 4) orbScoreMethodIndex = methodIndex;
     }
 
+    public int GetScoreMethodIndex(int wispType)
+    {
+        int[] resultArray = { treeScoreMethodIndex, pumpkinsScoreMethodIndex, heartScoreMethodIndex, witchScoreMethodIndex, orbScoreMethodIndex };
+        return resultArray[wispType];
+    }
+
     public static string [] GetInfoScoreMethods(int wispType, int methodIndex)
     {
         if (wispType == 2) 

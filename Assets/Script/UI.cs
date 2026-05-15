@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -18,6 +19,14 @@ public class UI : MonoBehaviour
     public Material[] CatMaterialsHidden;
     public Slider difficultySlider;
     public TextMeshProUGUI difficultyMultipliersText;
+    public GameObject[] catsButtons;
+    public TextMeshProUGUI ChooseCatTitle;
+    public TextMeshProUGUI ChooseCatDesc;
+    public Color ghostColor;
+    public Color chooseColor;
+    public float choosingGhostTime = 3.0f;
+    public float ghostStepTime = 0.1f;
+    
 
     [Header("Scoring - UI")]
     public TextMeshProUGUI scoreText;
@@ -28,6 +37,7 @@ public class UI : MonoBehaviour
     public TextMeshProUGUI[] descriptionTexts;
     public Image panelImage;
     public GameObject detailedScoreNode;
+    public GoalCard goalCardGameplay;
 
     [Header("Global - UI")]
     public TextMeshProUGUI catIsHiddenText;
@@ -50,6 +60,7 @@ public class UI : MonoBehaviour
     public GameObject treeTurnActions;
     public TextMeshProUGUI treeCounter;
     public GameObject BackToPondButton;
+    public GameObject undoArrow;
     private int treeCounterInt = 0;
 
     [Header("Single Player")]
@@ -95,6 +106,17 @@ public class UI : MonoBehaviour
             cameraMover.changePosition();
         }
 
+        if (!Debug.isDebugBuild)
+        {
+            foreach (TMP_Dropdown dropdown in scoreMethodDropdowns)
+            {
+                dropdown.interactable = false;
+                dropdown.transform.GetChild(0).GetComponent<RectTransform>().offsetMax = new Vector2(-10,-7);
+                dropdown.transform.GetChild(1).gameObject.SetActive(false);
+
+            }
+
+        }
         // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
         //CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[0];
 
@@ -108,12 +130,7 @@ public class UI : MonoBehaviour
         int index = materialIndex % CatMaterials.Length;
         CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
         CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index];
-        int indexEnemy = UnityEngine.Random.Range(0, CatMaterials.Count());
-        while(indexEnemy == index) indexEnemy = UnityEngine.Random.Range(0, CatMaterials.Count());
-        enemyTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[indexEnemy];
-        enemyTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[indexEnemy];
-        gridManager.resetCat();
-        gameManager.StartGame();
+        StartCoroutine(ChooseGhostCatAnim(materialIndex));
     }
 
     void InitializeScoreOptions()
@@ -168,6 +185,8 @@ public class UI : MonoBehaviour
             descriptionTexts[i].text = textsArray[i];
         }
 
+        goalCardGameplay.gameObject.SetActive(index < 5);
+        if (index<5) goalCardGameplay.ShowDuringGame(index);
 
 
 
@@ -183,11 +202,15 @@ public class UI : MonoBehaviour
     public void ShowCatHidden()
     {
         catIsHiddenText.gameObject.SetActive(true);
+        CatActionWispsButton.GetComponent<Button>().interactable = false;
+        CatActionsShapesButton.GetComponent<Button>().interactable = false;
     }
 
     public void HideCatHidden()
     {
         catIsHiddenText.gameObject.SetActive(false);
+        CatActionWispsButton.GetComponent<Button>().interactable = true;
+        CatActionsShapesButton.GetComponent<Button>().interactable = true;
     }
 
     public void UpdateScore(int score)
@@ -261,9 +284,10 @@ public class UI : MonoBehaviour
         CatActionWispsButton.SetActive(false);
         CatActionsShapesButton.SetActive(true);
     }
-    public void ShowArrows()
+    public void ShowArrows(bool isCatTurn = false)
     {
         ArrowButtons.SetActive(true);
+        undoArrow.SetActive(!isCatTurn);
         ArrowForShapesButtons.SetActive(false);
     }
 
@@ -547,4 +571,52 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void HideUndoArrow()
+    {
+        undoArrow.SetActive(false);
+    }
+
+    IEnumerator ChooseGhostCatAnim(int chosenCatIndex)
+    {
+        foreach (GameObject cat in catsButtons)
+        {
+            cat.GetComponent<Button>().interactable = false;
+        }
+
+        float time = choosingGhostTime;
+        float counter = 0;
+        int prevIndex = -1;
+        Color startColor = catsButtons[0].GetComponent<Image>().color;
+
+        catsButtons[chosenCatIndex].GetComponent<Image>().color = chooseColor;
+
+        while (counter < time)
+        {
+            yield return new WaitForSeconds(ghostStepTime);
+            counter += Time.deltaTime + ghostStepTime;
+            int i = Random.Range(0, 12);
+            while(i == chosenCatIndex || i == prevIndex) i = Random.Range(0, 12);
+            if (prevIndex != -1) catsButtons[prevIndex].GetComponent<Image>().color = startColor;
+            catsButtons[i].GetComponent<Image>().color = ghostColor;
+            prevIndex = i;
+        }
+        for (int i = 0; i < 2; ++i)
+        {
+            yield return new WaitForSeconds(2 * ghostStepTime);
+            catsButtons[prevIndex].GetComponent<Image>().color = startColor;
+            yield return new WaitForSeconds(2 * ghostStepTime);
+            catsButtons[prevIndex].GetComponent<Image>().color = ghostColor;
+        }
+        yield return new WaitForSeconds(2 * ghostStepTime);
+
+        int indexEnemy = prevIndex;
+        enemyTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[indexEnemy];
+        enemyTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[indexEnemy];
+        gridManager.resetCat();
+        gameManager.StartGame();
+        MenuPanel.SetActive(false);
+        ChooseCatTitle.text = "Choosing Ghost Cat";
+        ChooseCatDesc.text = "";
+    }
+    
 }

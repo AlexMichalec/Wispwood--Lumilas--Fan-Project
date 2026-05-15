@@ -35,7 +35,7 @@ public class GridManager : MonoBehaviour
     private List<List<GameObject>> gridList2 = new List<List<GameObject>>();
 
     //Lists
-    private List<Vector2> possiblePlacesToAddTile = new List<Vector2>();
+    private List<Vector2Int> possiblePlacesToAddTile = new List<Vector2Int>();
 
     //Objects
     private GameObject catTile;
@@ -48,6 +48,10 @@ public class GridManager : MonoBehaviour
     private int treeTurnCounter = 0;
     private int choiceIndex = 0;
     private bool inputEnabled = true;
+
+    //Undo Button
+    private bool wasCatFlipped = false;
+    private List<Vector2Int> addedTrees= new List<Vector2Int>();
     
 
     //Does it have to be global?
@@ -256,14 +260,14 @@ public class GridManager : MonoBehaviour
             for (int j = 0; j < gridList[i].Count; j++)
             {
                 if (gridList[i][j] == 0) continue;
-                if (CanAddLeft(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i, j - 1)))
-                    possiblePlacesToAddTile.Add(new Vector2(i, j - 1));
-                if (CanAddRight(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i, j + 1)))
-                    possiblePlacesToAddTile.Add(new Vector2(i, j + 1));
-                if (CanAddUp(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i - 1, j)))
-                    possiblePlacesToAddTile.Add(new Vector2(i - 1, j));
-                if (CanAddDown(i, j) && !possiblePlacesToAddTile.Contains(new Vector2(i + 1, j)))
-                    possiblePlacesToAddTile.Add(new Vector2(i + 1, j));
+                if (CanAddLeft(i, j) && !possiblePlacesToAddTile.Contains(new Vector2Int(i, j - 1)))
+                    possiblePlacesToAddTile.Add(new Vector2Int(i, j - 1));
+                if (CanAddRight(i, j) && !possiblePlacesToAddTile.Contains(new Vector2Int(i, j + 1)))
+                    possiblePlacesToAddTile.Add(new Vector2Int(i, j + 1));
+                if (CanAddUp(i, j) && !possiblePlacesToAddTile.Contains(new Vector2Int(i - 1, j)))
+                    possiblePlacesToAddTile.Add(new Vector2Int(i - 1, j));
+                if (CanAddDown(i, j) && !possiblePlacesToAddTile.Contains(new Vector2Int(i + 1, j)))
+                    possiblePlacesToAddTile.Add(new Vector2Int(i + 1, j));
 
             }
         }
@@ -282,14 +286,14 @@ public class GridManager : MonoBehaviour
                 {
                     if (possiblePlacesToAddTile[i].x > possiblePlacesToAddTile[j].x)
                     {
-                        Vector2 temp = possiblePlacesToAddTile[i];
+                        Vector2Int temp = possiblePlacesToAddTile[i];
                         possiblePlacesToAddTile[i] = possiblePlacesToAddTile[j];
                         possiblePlacesToAddTile[j] = temp;
                     }
                 }
                 else if (possiblePlacesToAddTile[i].y < possiblePlacesToAddTile[j].y)
                 {
-                    Vector2 temp = possiblePlacesToAddTile[i];
+                    Vector2Int temp = possiblePlacesToAddTile[i];
                     possiblePlacesToAddTile[i] = possiblePlacesToAddTile[j];
                     possiblePlacesToAddTile[j] = temp;
                 }
@@ -321,7 +325,8 @@ public class GridManager : MonoBehaviour
         int gridTileIndex = 1;
         GameObject newTile = Instantiate(tilePrefabs[tileIndex]);
         newTile.transform.rotation = Quaternion.Euler(0, 0, 180);
-        Vector2 chosenPlace = possiblePlacesToAddTile[choiceIndex];
+        Vector2Int chosenPlace = possiblePlacesToAddTile[choiceIndex];
+        addedTrees.Add(chosenPlace);
         AddNewTile(chosenPlace, newTile, gridTileIndex, nearChoiceLocation);
 
     }
@@ -390,9 +395,9 @@ public class GridManager : MonoBehaviour
     }
     void AddNewTile(Vector2 chosenPlace, GameObject newTile, int gridTileIndex, Vector2 usedTile)
     {
-        Debug.Log("BEFORE");
-        Debug.Log("ChosenPlace: " + chosenPlace.ToString());
-        Debug.Log(gridList.Count + "x" + gridList[0].Count);
+        //Debug.Log("BEFORE");
+        //Debug.Log("ChosenPlace: " + chosenPlace.ToString());
+        //Debug.Log(gridList.Count + "x" + gridList[0].Count);
         // Rozszerzanie matrycy     <-można o więcej niż 1?
         //w górę
         if (chosenPlace.x < 0)
@@ -657,6 +662,7 @@ public class GridManager : MonoBehaviour
         //4 ENTER
         if (i == 4)
         {
+            userInterface.HideUndoArrow();
             treeTurnCounter++;
             userInterface.TreeCounterUp();
             AddTree();
@@ -667,6 +673,7 @@ public class GridManager : MonoBehaviour
                 if (IsFull())
                 {
                     gameManager.FinishRound();
+                    ResetUndoValues();
                     return;
                 }
                 PreparePossiblePlaces();
@@ -674,11 +681,48 @@ public class GridManager : MonoBehaviour
             }
             else
             {
+                ResetUndoValues();
                 if (isLastTurn || IsFull()) gameManager.FinishRound();
                 else gameManager.NextPlayer();
 
             }
         }
+
+        //UNDO
+        if (i == 9)
+        {
+            StartCoroutine(UndoTreeTurn());
+        }
+    }
+
+    IEnumerator UndoTreeTurn()
+    {
+        foreach (Vector2Int treeV in addedTrees)
+        {
+            gridList[treeV.x][treeV.y] = 0;
+            StartCoroutine(DisappearTree(gridList2[treeV.x][treeV.y]));
+            //gridList2[treeV.x][treeV.y] = null;
+        }
+        if (wasCatFlipped)
+        {
+            StartCoroutine(FlipCatTile());
+            userInterface.ShowCatHidden();
+            gameManager.isCatHidden = true;
+        }
+        
+        userInterface.HideArrows();
+        if (wasCatFlipped) yield return new WaitForSeconds(0.5f);
+        ResetUndoValues();
+        cameraMover.changePosition();
+        userInterface.HideTreeTurnActions();
+        yield return new WaitForSeconds(0.5f);
+        userInterface.ShowPondActions();
+    }
+
+    void ResetUndoValues()
+    {
+        wasCatFlipped = false;
+        addedTrees.Clear();
     }
 
     void CatInputManager(int i)
@@ -882,6 +926,7 @@ public class GridManager : MonoBehaviour
         }
         catTile.transform.rotation = endRotation;
         catTile.transform.position = oldPos;
+        wasCatFlipped = true;
         //userInterface.flipCat();
 
     }
