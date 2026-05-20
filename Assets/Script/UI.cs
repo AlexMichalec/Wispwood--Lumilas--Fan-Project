@@ -99,6 +99,8 @@ public class UI : MonoBehaviour
         InitializeScoreOptions();
         ShowScoreMethod(5);
         ResetDetailedScore();
+        fireFliesObject.SetActive(false);
+        ghostButton.SetActive(false);
         if (testingMenu)
         {
             StepOne.SetActive(true);
@@ -590,6 +592,9 @@ public class UI : MonoBehaviour
 
         catsButtons[chosenCatIndex].GetComponent<Image>().color = chooseColor;
 
+        ChooseCatTitle.text = "";
+        ChooseCatDesc.text = "Choosing Ghost Cat";
+
         while (counter < time)
         {
             yield return new WaitForSeconds(ghostStepTime);
@@ -615,8 +620,7 @@ public class UI : MonoBehaviour
         gridManager.resetCat();
         gameManager.StartGame();
         MenuPanel.SetActive(false);
-        ChooseCatTitle.text = "Choosing Ghost Cat";
-        ChooseCatDesc.text = "";
+        
     }
     
 }

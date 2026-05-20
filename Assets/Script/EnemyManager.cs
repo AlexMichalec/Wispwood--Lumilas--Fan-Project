@@ -29,6 +29,21 @@ public class EnemyManager : MonoBehaviour
 
     public void ChooseFireflies()
     {
+        int amount = 2 + 2 * gameManager.round;
+        for (int i = 0; i < 40; ++i) //Shuffle Fireflies
+        {
+            int a = Random.Range(0, fireflies.Length);
+            int b = Random.Range(0, fireflies.Length);
+            (fireflies[a], fireflies[b]) = (fireflies[b], fireflies[a]);
+        }
+        currentFireflies = new Queue<int>();
+        for (int i = 0; i < amount; ++i) currentFireflies.Enqueue(fireflies[i]);
+        userInterface.InitializeFireflies(amount);
+
+
+    }
+    public void ChooseFirefliesOld()
+    {
         int amount = 2 + 2* gameManager.round;
         for (int i = 0; i <40; ++i) //Shuffle Fireflies
         {
@@ -77,11 +92,11 @@ public class EnemyManager : MonoBehaviour
         enemyPondIndex = index;
     }
 
-    public IEnumerator CollectWisp(float delay = 0.1f)
+    public IEnumerator CollectWisp(float delay = 0.1f, int howFar = 0, bool isLastTurn = false)
     {
         yield return new WaitForSeconds(delay);
-        int howFar = currentFireflies.Dequeue();
-        userInterface.UpdateFireflies(howFar, currentFireflies.Count);
+        //int howFar = currentFireflies.Dequeue();
+        //userInterface.UpdateFireflies(howFar, currentFireflies.Count);
 
 
         yield return new WaitForSeconds(1.5f);
@@ -95,9 +110,8 @@ public class EnemyManager : MonoBehaviour
             {
                 choosePool = new List<GameObject>();
                 gameManager.DealNewWisps();
-                yield return new WaitForSeconds(2);
                 StartCoroutine(userInterface.EnemyActionUpdate("Za mało duszków! Duch wezwał nową porcję...", 3));
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(3);
             }
             else if (pondTiles[i] != null)
             {
@@ -142,7 +156,7 @@ public class EnemyManager : MonoBehaviour
         enemyTile.transform.position = gameManager.GetPlatformPosition(enemyPondIndex) + new Vector3(0,0.1f,0);
 
         
-        gameManager.NextPlayer(currentFireflies.Count == 0);
+        gameManager.NextPlayer(isLastTurn);
 
         yield return new WaitForSeconds(1);
         userInterface.UpdateGhostScore(collectedWisps, chosenWisp);

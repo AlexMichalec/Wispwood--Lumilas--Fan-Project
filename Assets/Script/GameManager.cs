@@ -47,12 +47,14 @@ public class GameManager : MonoBehaviour
     private bool enemySpawned = false;
     public bool inputEnabled = true;
     private Color platformOldColor;
+    public float enemySpawnHeight = 0.3f;
 
     [Header("Navigation")]
     public GridManager gridManager;
     public UI userInterface;
     public MoveCamera cameraMover;
     public EnemyManager enemyManager;
+    public FireflyView fireflyManager;
 
 
     void Start()
@@ -172,7 +174,7 @@ public class GameManager : MonoBehaviour
     void SpawnEnemyTile(int index = -1)
     {
         if (index == -1) index = Random.Range(0, pondTiles.Count - 1);
-        Vector3 pos = pondTiles[index].transform.position;
+        Vector3 pos = pondTiles[index].transform.position + new Vector3(0, enemySpawnHeight, 0);
         Destroy(pondTiles[index]);
         enemyManager.SpawnEnemy(pos, index);
         StartCoroutine(FirstEnemyMoveGame());
@@ -190,9 +192,11 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(enemyFirefliesDelay);
         //Losuj świetliki
-        enemyManager.ChooseFireflies();
-        yield return new WaitForSeconds(enemyFirefliesAfterDelay);
-        StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
+        if (round == 1) StartCoroutine(fireflyManager.InitFireflies());
+        else StartCoroutine(fireflyManager.NextRound());
+        //enemyManager.ChooseFireflies();
+        //yield return new WaitForSeconds(enemyFirefliesAfterDelay);
+        //StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
     }
 
     public void ResetGame()
@@ -448,7 +452,7 @@ public class GameManager : MonoBehaviour
             cameraMover.changePosition();
             gridManager.SetInputEnabled(false);
             userInterface.HidePondActions();
-            StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
+            StartCoroutine(fireflyManager.NextFirefly(false));
         }
         else
         {
