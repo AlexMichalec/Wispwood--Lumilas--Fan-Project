@@ -463,7 +463,6 @@ public class GridManager : MonoBehaviour
         gridList2[(int)chosenPlace.x][(int)chosenPlace.y] = newTile;
 
         //Umieść Fizycznie
-        print("used object position: " + usedTile.ToString());
         GameObject usedTileObject = gridList2[(int)usedTile.x][(int)usedTile.y];
         float posX = usedTileObject.transform.position.x + distanceBetweenTiles * (chosenPlace.x - usedTile.x);
         float posY = spawnHeight;
@@ -667,7 +666,7 @@ public class GridManager : MonoBehaviour
             userInterface.TreeCounterUp();
             AddTree();
             Destroy(choiceTile);
-            printInnerGrid();
+            //printInnerGrid();
             if (treeTurnCounter < 3)
             {
                 if (IsFull())
@@ -946,7 +945,6 @@ public class GridManager : MonoBehaviour
         shapeScript.GenerateFirstTime(shapeType, wispType);
         currentShape = newShape;
         Destroy(choiceTile);
-        print("FINISH");
     }
 
     public void TreeTurn()

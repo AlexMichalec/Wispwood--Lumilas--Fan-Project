@@ -27,7 +27,7 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
     //public ParticleSystem vfx;
     
 
-    public void Initialize(string title, string description, string points, Color background, Color txtBackground, Color wispColor, int mIndex, Texture2D gImage, Sprite pImage, int wType)
+    public void Initialize(string title, string description, string points, Color background, Color txtBackground, Color wispColor, int mIndex, Texture2D gImage, Sprite pImage, int wType, bool editMode = false)
     {
         titleText.text = title;
         descriptionText.text = description;
@@ -44,7 +44,7 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
         gameObject.GetComponent<RectTransform>().pivot = new Vector2(transform.position.x / Screen.width, 0);
         toChoose = true;
-        StartCoroutine(InitAnimation());
+        if (!editMode) StartCoroutine(InitAnimation());
         //vfx.startColor = wispColor;
         //vfx.Play();
 
@@ -174,14 +174,14 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         if (final) StartCoroutine(ScaleDownFinal());
     }
 
-    public void WaitAndAddToSaved(float savedScale, Vector3 goalPosition)
+    public void WaitAndAddToSaved(float savedScale, Vector3 goalPosition, float delay = 0)
     {
-        StartCoroutine(AddToSaved(savedScale, goalPosition));
+        StartCoroutine(AddToSaved(savedScale, goalPosition, delay));
     }
 
-    IEnumerator AddToSaved(float savedScale, Vector3 goalPosition)
+    IEnumerator AddToSaved(float savedScale, Vector3 goalPosition, float delay = 0)
     {
-        yield return new WaitForSeconds(animationTime);
+        yield return new WaitForSeconds(delay == 0 ? animationTime : delay);
         saved = true;
         Vector3 startPos = goalPosition + new Vector3(0, Screen.height / 2, 0);
         transform.position = startPos;
@@ -196,7 +196,8 @@ public class GoalCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
             float t = Mathf.Clamp01(counter / (animationTime / 2));
             transform.position = Vector3.Lerp(startPos, goalPosition, t);
         }
-        menu.InitializeCards();
+
+        if (delay == 0) menu.InitializeCards();
         
     }
 

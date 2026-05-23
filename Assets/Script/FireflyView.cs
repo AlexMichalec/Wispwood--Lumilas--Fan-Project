@@ -277,7 +277,7 @@ public class FireflyView : MonoBehaviour
 
 
         }
-        yield return new WaitForSeconds(flipTime);
+        yield return new WaitForSeconds(2*flipTime/3);
         StartCoroutine(ChooseFirefliesForRound());
     }
 

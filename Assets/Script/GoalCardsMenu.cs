@@ -1,6 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class GoalCardsMenu : MonoBehaviour
 {
@@ -29,11 +29,12 @@ public class GoalCardsMenu : MonoBehaviour
     private GameObject lastEditedCard = null;
 
     public UI userInterface;
+    public GoalCardsSelector setSelector;
 
 
     void Start()
     {
-        HideWispTexts();
+        
     }
 
     // Update is called once per frame
@@ -47,7 +48,8 @@ public class GoalCardsMenu : MonoBehaviour
 
     public void InitializeCards(int againIndex = -1)
     {
-       // for (int i = 0; i < cardsList.Count; ++i) Destroy(cardsList[i]);
+        HideWispTexts();
+        // for (int i = 0; i < cardsList.Count; ++i) Destroy(cardsList[i]);
         cardsList.Clear();
         if (savedList.Count >= 5 && againIndex == -1)
         {
@@ -91,8 +93,8 @@ public class GoalCardsMenu : MonoBehaviour
 
     public void ShowWispTexts(int wIndex)
     {
-        wTitle.GetComponent<RectTransform>().anchoredPosition = new Vector3(wTitle.GetComponent<RectTransform>().anchoredPosition.x, wIndex == 5 ? -42: 22);
-        wDescription.GetComponent<RectTransform>().anchoredPosition = new Vector3(wTitle.GetComponent<RectTransform>().anchoredPosition.x, wIndex == 5 ? -72 : -12);
+        wTitle.GetComponent<RectTransform>().anchoredPosition = new Vector3(wTitle.GetComponent<RectTransform>().anchoredPosition.x, wIndex >= 5 ? -42: 22);
+        wDescription.GetComponent<RectTransform>().anchoredPosition = new Vector3(wTitle.GetComponent<RectTransform>().anchoredPosition.x, wIndex >= 5 ? -72 : -12);
         wTitle.gameObject.SetActive(true);
         wDescription.gameObject.SetActive(true);
         wTitle.color = wispColors[wIndex];
@@ -135,6 +137,7 @@ public class GoalCardsMenu : MonoBehaviour
         indexList.Insert(0, indexList[4]);
         indexList.RemoveAt(5);
         userInterface.SetScoreMethods(indexList);
+        setSelector.SetNewCustom(indexList);
         ResetMenu();
         gameObject.SetActive(false);
         
@@ -199,5 +202,40 @@ public class GoalCardsMenu : MonoBehaviour
         lastEditedCard = cardEdited;
         saveButton.SetActive(false);
         HideWispTexts();
+    }
+
+    public void InitEdit(List<int> indexToEdit)
+    {
+        indexList.Clear();
+        savedList.Clear();
+        cardsList.Clear();
+        List<GameObject> tempList = new List<GameObject>();
+        for(int i = 0; i < indexToEdit.Count; ++i)
+        {
+            indexList.Add(indexToEdit[i]);
+            GameObject newCard = Instantiate(cardPrefab, transform);
+            tempList.Add(newCard);
+            newCard.GetComponent<GoalCard>().menu = this;
+
+            int mIndex = indexToEdit[(i+4)%5];
+            string[] infoArray = Score.GetInfoScoreMethods(i+1, mIndex);
+            int newIndex = i;
+            
+            newCard.transform.position = new Vector3(0, 3000, 0);
+            newCard.GetComponent<GoalCard>().Initialize(infoArray[0], infoArray[1],
+                (infoArray.Length == 3) ? infoArray[2] : "",
+                backgroundColors[newIndex], textBackgorundColors[newIndex], wispColors[newIndex],
+                mIndex, gridImages[newIndex * 5 + i], pawsImages[cardsDifficulty[newIndex * 5 + i]], newIndex, true);
+            newCard.GetComponent<GoalCard>().toChoose = false;
+            newCard.GetComponent<GoalCard>().saved = true;
+            int posIndex = (i + 4) % 5;
+            newCard.GetComponent <GoalCard>().WaitAndAddToSaved(savedScale, new Vector3(Screen.width * (0.1f + 0.2f * posIndex), savedPoint.transform.position.y, 0), posIndex*0.2f + 0.1f);
+
+
+        }
+        tempList.Add(tempList[0]);
+        tempList.RemoveAt(0);
+        savedList = tempList;
+        ShowWispTexts(6);
     }
 }

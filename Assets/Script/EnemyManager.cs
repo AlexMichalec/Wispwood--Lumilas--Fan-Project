@@ -42,21 +42,7 @@ public class EnemyManager : MonoBehaviour
 
 
     }
-    public void ChooseFirefliesOld()
-    {
-        int amount = 2 + 2* gameManager.round;
-        for (int i = 0; i <40; ++i) //Shuffle Fireflies
-        {
-            int a = Random.Range(0, fireflies.Length);
-            int b = Random.Range(0, fireflies.Length);
-            (fireflies[a], fireflies[b]) = (fireflies[b], fireflies[a]);
-        }
-        currentFireflies = new Queue<int>();
-        for (int i = 0; i < amount; ++i) currentFireflies.Enqueue(fireflies[i]);
-        userInterface.InitializeFireflies(amount);
-        
 
-    }
 
     public void SetWispsMultipliers()
     {
@@ -95,11 +81,14 @@ public class EnemyManager : MonoBehaviour
     public IEnumerator CollectWisp(float delay = 0.1f, int howFar = 0, bool isLastTurn = false)
     {
         yield return new WaitForSeconds(delay);
-        //int howFar = currentFireflies.Dequeue();
-        //userInterface.UpdateFireflies(howFar, currentFireflies.Count);
+        if (gameManager.fastMode)
+        {
+            howFar = currentFireflies.Dequeue();
+            userInterface.UpdateFireflies(howFar, currentFireflies.Count);
+        }
 
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(gameManager.fastMode ? 0.5f:1);
 
         List<GameObject> choosePool = new List<GameObject>();
         int i = enemyPondIndex;
@@ -121,7 +110,7 @@ public class EnemyManager : MonoBehaviour
         }
         GameObject chosenTile = choosePool[0];
         gameManager.LightUp(choosePool);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(gameManager.fastMode ? 1:2);
 
         for (int j =1; j< choosePool.Count; ++j)
         {

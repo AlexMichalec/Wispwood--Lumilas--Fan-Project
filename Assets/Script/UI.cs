@@ -26,6 +26,9 @@ public class UI : MonoBehaviour
     public Color chooseColor;
     public float choosingGhostTime = 3.0f;
     public float ghostStepTime = 0.1f;
+    public GameObject tutorialPanel;
+    private bool firstTime = true;
+    private int catIndex;
     
 
     [Header("Scoring - UI")]
@@ -119,20 +122,57 @@ public class UI : MonoBehaviour
             }
 
         }
-        // CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[0];
-        //CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[0];
-
-
+        int x = SaveSystem.LoadHighscore();
+        if (x == 0)
+        {
+            x = 4;
+            SaveSystem.SaveHighscore(x);
+            print("Brak Highscore");
+        }
+        else
+        {
+            print("HS wynosi: " + x);
+        }
 
     }
 
     public void SetCatMaterial(int materialIndex)
     {
+        if (firstTime && !gameManager.tutorialMode)
+        {
+            tutorialPanel.SetActive(true);
+            catIndex = materialIndex;
+            return;
+        }
         if (CatMaterials.Length == 0) return;
         int index = materialIndex % CatMaterials.Length;
         CatTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[index];
         CatTilePrefab.transform.GetChild(1).GetComponent<Renderer>().material = CatMaterialsHidden[index];
         StartCoroutine(ChooseGhostCatAnim(materialIndex));
+    }
+
+    public void ClickTutoYes()
+    {
+        gameManager.tutorialToggle.isOn = true;
+        tutorialPanel.SetActive(false);
+        firstTime = false;
+        SetCatMaterial(catIndex);
+
+    }
+
+    public void ClickTutoNo()
+    {
+        gameManager.tutorialToggle.isOn = false;
+        firstTime = false;
+        tutorialPanel.SetActive(false);
+        SetCatMaterial(catIndex);
+
+    }
+
+    public void ClickTutoCancel()
+    {
+        tutorialPanel.SetActive(false);
+
     }
 
     void InitializeScoreOptions()
@@ -350,7 +390,7 @@ public class UI : MonoBehaviour
         float baseTime = 0.8f;
         int baseIndex = 0;
         string tempText = "";
-        skipScoringAnimation = false;
+        skipScoringAnimation = gameManager.fastMode;
         ghostScoreWindow.SetActive(true);
 
         while ( counter < baseTime && !skipScoringAnimation)
@@ -399,7 +439,7 @@ public class UI : MonoBehaviour
         ghostScoreboard.text = goalBoard;
         
         ghostButton.SetActive(false);
-        if (!skipScoringAnimation) yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2);
         ghostScoreWindow.SetActive(false);
         ghostButton.SetActive(true);
         skipScoringAnimation = false;
@@ -481,7 +521,8 @@ public class UI : MonoBehaviour
         int runda = gameManager.round - 1;
         for (int i =0; i < 7; ++i)
         {
-            yield return new WaitForSeconds(0.8f);
+
+            yield return new WaitForSeconds(gameManager.fastMode ? 0.1f : 0.5f);
             if (skipScoringAnimation) i = 6;
             string tempText = "1    2    3";
             for (int j = 0;  j < scoreArray.Count; ++j)
@@ -565,7 +606,7 @@ public class UI : MonoBehaviour
 
     public void SetScoreMethods(List<int> methodsList)
     {
-        foreach (int x in methodsList) print("P" + x);
+        //foreach (int x in methodsList) print("P" + x);
         for (int i = 0; i < methodsList.Count; ++i)
         {
             scoreMethodDropdowns[i].value = methodsList[i];
@@ -593,26 +634,29 @@ public class UI : MonoBehaviour
         catsButtons[chosenCatIndex].GetComponent<Image>().color = chooseColor;
 
         ChooseCatTitle.text = "";
-        ChooseCatDesc.text = "Choosing Ghost Cat";
+        ChooseCatDesc.text = "Losuję Kota - Widmo";
 
+        
         while (counter < time)
         {
             yield return new WaitForSeconds(ghostStepTime);
             counter += Time.deltaTime + ghostStepTime;
+            if (gameManager.fastMode) counter = time;
             int i = Random.Range(0, 12);
-            while(i == chosenCatIndex || i == prevIndex) i = Random.Range(0, 12);
+            while (i == chosenCatIndex || i == prevIndex) i = Random.Range(0, 12);
             if (prevIndex != -1) catsButtons[prevIndex].GetComponent<Image>().color = startColor;
             catsButtons[i].GetComponent<Image>().color = ghostColor;
             prevIndex = i;
         }
+        
         for (int i = 0; i < 2; ++i)
         {
-            yield return new WaitForSeconds(2 * ghostStepTime);
+            yield return new WaitForSeconds(gameManager.fastMode ? ghostStepTime : 2 * ghostStepTime);
             catsButtons[prevIndex].GetComponent<Image>().color = startColor;
-            yield return new WaitForSeconds(2 * ghostStepTime);
+            yield return new WaitForSeconds(gameManager.fastMode ? ghostStepTime : 2 * ghostStepTime);
             catsButtons[prevIndex].GetComponent<Image>().color = ghostColor;
         }
-        yield return new WaitForSeconds(2 * ghostStepTime);
+        yield return new WaitForSeconds(gameManager.fastMode ? ghostStepTime : 2 * ghostStepTime);
 
         int indexEnemy = prevIndex;
         enemyTilePrefab.transform.GetChild(0).GetComponent<Renderer>().material = CatMaterials[indexEnemy];

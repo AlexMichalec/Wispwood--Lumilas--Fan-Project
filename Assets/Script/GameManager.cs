@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class GameManager : MonoBehaviour
     public bool inputEnabled = true;
     private Color platformOldColor;
     public float enemySpawnHeight = 0.3f;
+    public bool fastMode => fastModeToggle.isOn;
+    public bool tutorialMode => tutorialToggle.isOn;
 
     [Header("Navigation")]
     public GridManager gridManager;
@@ -55,17 +58,22 @@ public class GameManager : MonoBehaviour
     public MoveCamera cameraMover;
     public EnemyManager enemyManager;
     public FireflyView fireflyManager;
+    public Toggle fastModeToggle;
+    public Toggle tutorialToggle;
 
 
     void Start()
     {
         if (!userInterface.testingMenu)StartGame();
+        if (PlayerPrefs.HasKey("fastMode")) fastModeToggle.isOn = (PlayerPrefs.GetInt("fastMode") == 1);
+        else fastModeToggle.isOn = Debug.isDebugBuild;
     }
 
     public void StartGame()
     {
         userInterface.ShowScoreMethod(5);
         userInterface.HideDealNewWisps();
+        
         if (singlePlayer)
         {
             userInterface.HidePondActions();
@@ -75,6 +83,9 @@ public class GameManager : MonoBehaviour
         }
         StartCoroutine(SpawnTiles());
         StartCoroutine(SpawnShapeChoices());
+
+        PlayerPrefs.SetInt("fastMode", fastMode ? 1 : 0);
+
     }
 
     IEnumerator SpawnShapeChoices()
@@ -88,7 +99,6 @@ public class GameManager : MonoBehaviour
             while (indexList.Contains(a)) a = Random.Range(0, 8);
             indexList.Add(a);
         }
-        print("IndexList " + indexList);
 
         for (int i = 0; i < 8; ++i)
         {
@@ -192,8 +202,18 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(enemyFirefliesDelay);
         //Losuj świetliki
-        if (round == 1) StartCoroutine(fireflyManager.InitFireflies());
-        else StartCoroutine(fireflyManager.NextRound());
+        if (fastMode)
+        {
+            enemyManager.ChooseFireflies();
+            yield return new WaitForSeconds(enemyFirefliesAfterDelay);
+            StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
+        }
+        else
+        {
+            if (round == 1) StartCoroutine(fireflyManager.InitFireflies());
+            else StartCoroutine(fireflyManager.NextRound());
+        }
+        
         //enemyManager.ChooseFireflies();
         //yield return new WaitForSeconds(enemyFirefliesAfterDelay);
         //StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
@@ -353,7 +373,6 @@ public class GameManager : MonoBehaviour
     {
         DeactivateAllShapes();
         chosenWisp.SetActive(false);
-        print("CHOICE " + shapeType);
         cameraMover.changePosition();
         gridManager.AddNewShape(shapeType, chosenWisp.GetComponent<TileScript>().wispType);
         userInterface.HidePondActions();
@@ -452,7 +471,8 @@ public class GameManager : MonoBehaviour
             cameraMover.changePosition();
             gridManager.SetInputEnabled(false);
             userInterface.HidePondActions();
-            StartCoroutine(fireflyManager.NextFirefly(false));
+            if (fastMode) StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
+            else StartCoroutine(fireflyManager.NextFirefly(false));
         }
         else
         {
@@ -514,5 +534,7 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+
 }
 

@@ -9,6 +9,7 @@ public class ToolTip : MonoBehaviour
     public TextMeshProUGUI headerText;
     public TextMeshProUGUI contentText;
     public LayoutElement layoutElement;
+    public LayoutElement layoutElementHeader;
     public int charachterLimit = 80;
     public float offsetUp = 15;
     public float offsetDown = -15;
@@ -27,6 +28,16 @@ public class ToolTip : MonoBehaviour
         headerText.text = newHeader;
         contentText.text = newContent;
         layoutElement.enabled = (newContent.Length > charachterLimit);
+        if (newHeader.Length > charachterLimit)
+        {
+            layoutElementHeader.enabled = true;
+            headerText.alignment = TMPro.TextAlignmentOptions.Left;
+        }
+        else 
+        {
+            layoutElementHeader.enabled = false;
+            headerText.alignment = TMPro.TextAlignmentOptions.Center;
+        }
         headerText.gameObject.SetActive(!string.IsNullOrEmpty(newHeader));
 
     }
