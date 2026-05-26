@@ -43,30 +43,7 @@ public class FireflyView : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            StartCoroutine(InitFireflies());
-        }
 
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            StartCoroutine(ChooseFirefliesForRound());
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            StartCoroutine(NextFirefly());
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            StartCoroutine(NextRound());
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            StartCoroutine(MixFireflies());
-        }
     }
 
     public IEnumerator InitFireflies()

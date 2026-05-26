@@ -27,6 +27,7 @@ public class UI : MonoBehaviour
     public float choosingGhostTime = 3.0f;
     public float ghostStepTime = 0.1f;
     public GameObject tutorialPanel;
+    public TextMeshProUGUI highscoreText;
     private bool firstTime = true;
     private int catIndex;
     
@@ -87,6 +88,8 @@ public class UI : MonoBehaviour
     public GameObject GameOverLose;
     public GameObject GameOverTie;
     public TextMeshProUGUI GameOverScores;
+    public TextMeshProUGUI highScoreGameOver;
+    public TextMeshProUGUI highScoreBeaten;
 
     [Header("Navigation")]
     public GameManager gameManager;
@@ -99,6 +102,9 @@ public class UI : MonoBehaviour
     void Start()
     {
         scoreText.text = "Score: 0";
+        int hiScore = SaveSystem.LoadHighscore();
+        highscoreText.gameObject.SetActive(hiScore > 0);
+        highscoreText.text = highscoreText.text + " " + hiScore;
         InitializeScoreOptions();
         ShowScoreMethod(5);
         ResetDetailedScore();
@@ -571,6 +577,33 @@ public class UI : MonoBehaviour
         GameOverTie.SetActive(myScore == enemyScore);
         GameOverScores.text = myScore + "p. vs " + enemyScore + "p.";
         GameOverWindow.SetActive(true);
+        if (myScore > SaveSystem.LoadHighscore())
+        {
+
+            StartCoroutine(UpdateHighScore(SaveSystem.LoadHighscore(), myScore));
+            SaveSystem.SaveHighscore(myScore);
+            highScoreBeaten.gameObject.SetActive(true);
+        }
+        else
+        {
+            highScoreBeaten.gameObject.SetActive(false);
+            highScoreGameOver.text += " " + SaveSystem.LoadHighscore();
+        }
+    }
+
+    IEnumerator UpdateHighScore(int before, int now)
+    {
+        string baseText = highScoreGameOver.text;
+
+        highScoreGameOver.text = baseText + " " + before;
+        yield return new WaitForSeconds(1);
+        while (before < now)
+        {
+            yield return null;
+            before += 1;
+            highScoreGameOver.text = baseText + " " + before;
+        }
+
     }
 
     public void PeekYourForest()
