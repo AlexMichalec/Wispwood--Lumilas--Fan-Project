@@ -30,6 +30,7 @@ public class TileScript : MonoBehaviour
     private void OnMouseDown()
     {
         if (!inPond || !gameManager.inputEnabled) return;
+        if (Time.timeScale == 0) return;
         gameObject.GetComponentInChildren<ParticleSystem>().Stop();
         gameManager.ChooseWisp(gameObject);
         GetComponent<Renderer>().material.color = oldColor;

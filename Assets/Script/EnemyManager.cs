@@ -72,7 +72,7 @@ public class EnemyManager : MonoBehaviour
 
     public void SpawnEnemy(Vector3 pos, int index)
     {
-        enemyTile = Instantiate(enemyTilePrefab, pos, enemyTilePrefab.transform.rotation*Quaternion.Euler(0,180,0));
+        enemyTile = Instantiate(enemyTilePrefab, pos, Quaternion.Euler(0,180,0));
         pondTiles = gameManager.GetPondTiles();
         pondTiles[index] = enemyTile;
         enemyPondIndex = index;

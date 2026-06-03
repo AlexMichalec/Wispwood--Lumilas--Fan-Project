@@ -52,12 +52,16 @@ public class GameManager : MonoBehaviour
     public bool fastMode => fastModeToggle.isOn;
     public bool tutorialMode => tutorialToggle.isOn;
 
+    public int playerMoveCounter = 0;
+    private bool firstTreeTurn  = true;
+
     [Header("Navigation")]
     public GridManager gridManager;
     public UI userInterface;
     public MoveCamera cameraMover;
     public EnemyManager enemyManager;
     public FireflyView fireflyManager;
+    public Tutorial tutorial;
     public Toggle fastModeToggle;
     public Toggle tutorialToggle;
 
@@ -183,6 +187,7 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemyTile(int index = -1)
     {
+        
         if (index == -1) index = Random.Range(0, pondTiles.Count - 1);
         Vector3 pos = pondTiles[index].transform.position + new Vector3(0, enemySpawnHeight, 0);
         Destroy(pondTiles[index]);
@@ -193,7 +198,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator FirstEnemyMoveGame()
     {
-        yield return new WaitForSeconds(enemySetScoringDelay);
+        yield return new WaitForSeconds(1.0f);
+        if (tutorialMode) tutorial.Next();
+        yield return new WaitForSeconds(enemySetScoringDelay - 0.5f);
         //losuj Punktację
         enemyManager.SetWispsMultipliers();
     }
@@ -307,6 +314,8 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(pondFlipTime);
             enemySpawned = true;
+            if (tutorialMode) tutorial.Next();
+            yield return new WaitForSeconds(0.5f);
             SpawnEnemyTile();
         }
     }
@@ -358,7 +367,8 @@ public class GameManager : MonoBehaviour
             chosenWisp.GetComponent<TileScript>().PutInPond();
             DeactivateAllShapes();
 
-        }   
+        }
+        if (tutorialMode && playerMoveCounter == 1 && chosenWisp == null) tutorial.NextDelay(0.1f);
         int pondIndex = WispTile.GetComponent<TileScript>().pondIndex;
         int indexBefore = (pondIndex + 1) % shapeChoices.Count;
         int indexAfter = (pondIndex + 2) % shapeChoices.Count; ;
@@ -378,7 +388,9 @@ public class GameManager : MonoBehaviour
         userInterface.HidePondActions();
         userInterface.ShowArrowsForShapes();
         gridManager.SetInputEnabled(true);
+        if (playerMoveCounter == 1 && tutorialMode) tutorial.NextDelay(1.5f);
     }
+
 
     public void UndoChoice()
     {
@@ -405,6 +417,7 @@ public class GameManager : MonoBehaviour
 
     public void PrepareCatToMove()
     {
+        if (tutorialMode && round == 1) tutorial.Next();
         gridManager.movingCat = true;
         gridManager.SetInputEnabled(true);
         userInterface.ShowArrows();
@@ -425,12 +438,25 @@ public class GameManager : MonoBehaviour
         isCatHidden = false;
         userInterface.HidePondActions();
         gridManager.SetInputEnabled(true);
+        if (tutorialMode && playerMoveCounter > 0 && tutorial.tutIndex == tutorial.treeTurnInfoIndex - 1) tutorial.NextDelay(1);
+        else
+        {
+            if (tutorialMode && playerMoveCounter > 0 && tutorial.tutIndex < tutorial.treeTurnInfoIndex - 1)
+            {
+                tutorial.tutIndex += 2;
+                tutorial.JumpToDelay(tutorial.treeTurnInfoIndex, 1);
+            }
+            if (tutorialMode && playerMoveCounter == 0)  tutorial.JumpToDelay(tutorial.treeTurnInfoIndex,1);
+            if (tutorialMode && tutorial.tutIndex > tutorial.treeTurnInfoIndex && !tutorial.treeTurnExplained) tutorial.JumpToDelay(tutorial.treeTurnInfoIndex, 1);
+        }
     }
 
     IEnumerator flipCatLate()
     {
         userInterface.HideCatHidden();
         yield return new WaitForSeconds(2);
+        if (firstTreeTurn && tutorialMode) tutorial.Next();
+        firstTreeTurn = false;
         StartCoroutine(gridManager.FlipCatTile());
         
     }
@@ -473,6 +499,8 @@ public class GameManager : MonoBehaviour
             userInterface.HidePondActions();
             if (fastMode) StartCoroutine(enemyManager.CollectWisp(enemyMoveDelay));
             else StartCoroutine(fireflyManager.NextFirefly(false));
+
+            if (tutorialMode && playerMoveCounter == 1) tutorial.NextDelay(1.5f);
         }
         else
         {
@@ -484,6 +512,8 @@ public class GameManager : MonoBehaviour
     IEnumerator DelayPlayerUI()
     {
         yield return new WaitForSeconds(playerTurnDelat);
+        playerMoveCounter++;
+        if (playerMoveCounter <= 2 && tutorialMode) tutorial.Next(); 
         userInterface.ShowPondActions();
         inputEnabled = true;
         

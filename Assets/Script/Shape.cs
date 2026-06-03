@@ -437,6 +437,7 @@ public class Shape : MonoBehaviour
         //4 ENTER
         if (i == 4)
         {
+            if (Time.timeScale == 0) return;
             if (canBePlacedWhole) MakeFinal();
         }
 
@@ -467,6 +468,7 @@ public class Shape : MonoBehaviour
         //9 UNDO
         if (i == 9)
         {
+            if (Time.timeScale == 0) return;
             gameManager.UndoChoice();
             userInterface.HideArrows();
             cameraMover.changePosition();

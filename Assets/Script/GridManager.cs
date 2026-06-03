@@ -614,6 +614,7 @@ public class GridManager : MonoBehaviour
     public void ButtonInputManager(int i)
     {
         if (!inputEnabled) return;
+        
         //If we're adding a shape currently
         if (currentShape != null) 
         {
@@ -661,6 +662,7 @@ public class GridManager : MonoBehaviour
         //4 ENTER
         if (i == 4)
         {
+            if (Time.timeScale == 0) return;
             userInterface.HideUndoArrow();
             treeTurnCounter++;
             userInterface.TreeCounterUp();
@@ -690,6 +692,7 @@ public class GridManager : MonoBehaviour
         //UNDO
         if (i == 9)
         {
+            if (Time.timeScale == 0) return;
             StartCoroutine(UndoTreeTurn());
         }
     }

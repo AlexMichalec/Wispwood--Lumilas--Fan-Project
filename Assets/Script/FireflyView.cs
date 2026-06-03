@@ -25,6 +25,8 @@ public class FireflyView : MonoBehaviour
     public UI userInterface;
     public MoveCamera cameraMover;
     public EnemyManager enemyManager;
+    public GameManager gameManager;
+    public Tutorial tutorial;
 
     private int[] values = { 1, 2, 2, 2, 3, 3, 3, 4 };
     private int round = 1;
@@ -33,6 +35,7 @@ public class FireflyView : MonoBehaviour
     private List<GameObject> shownFireflies = new List<GameObject>();
     private List<Vector3> goalPositions = new List<Vector3>();
     private List<GameObject> inAir = new List<GameObject>();
+    private bool firstFireflyInGame = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -69,6 +72,7 @@ public class FireflyView : MonoBehaviour
     IEnumerator FlipAll()
     {
         StartCoroutine(userInterface.EnemyActionUpdate("Losuję świetliki dla Ducha"));
+        if (gameManager.tutorialMode) tutorial.Next();
         foreach (GameObject firefly in allFireflies)
         {
             yield return new WaitForSeconds(0.1f);
@@ -176,6 +180,10 @@ public class FireflyView : MonoBehaviour
             yield return new WaitForSeconds(cameraMover.fullTime);
 
         }
+        if (gameManager.tutorialMode && firstFireflyInGame) 
+        {
+            //tutorial.Next();
+        }
         float time = flipTime;
         float counter = 0;
         GameObject firefly = chosenFireflies[chosenFireflies.Count - 1];
@@ -194,6 +202,12 @@ public class FireflyView : MonoBehaviour
         }
         shownFireflies.Add(firefly);
         userInterface.UpdateFireflies(GetValue(firefly), chosenFireflies.Count);
+        if (gameManager.tutorialMode && firstFireflyInGame)
+        {
+            tutorial.NextDelay(0.2f); //???
+            firstFireflyInGame = false;
+        }
+
         yield return new WaitForSeconds(delayBeforeEnemyMove);
         StartCoroutine(cameraMover.moveCamera());
         StartCoroutine(enemyManager.CollectWisp(cameraMover.fullTime, GetValue(firefly), chosenFireflies.Count == 0));

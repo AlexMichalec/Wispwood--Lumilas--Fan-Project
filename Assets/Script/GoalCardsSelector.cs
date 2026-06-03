@@ -22,7 +22,7 @@ public class GoalCardsSelector : MonoBehaviour
 
         if (PlayerPrefs.HasKey("CardSetIndex"))
         {
-            
+            RandomizeSet();
             SetByIndex(PlayerPrefs.GetInt("CardSetIndex"));
         }
         else 

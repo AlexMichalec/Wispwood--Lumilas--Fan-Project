@@ -29,6 +29,7 @@ public class ShapeChoice : MonoBehaviour
     private void OnMouseDown()
     {
         if (!isActive) return;
+        if (Time.timeScale == 0) return;
         gameManager.ChooseShape(shapeType);
     }
 

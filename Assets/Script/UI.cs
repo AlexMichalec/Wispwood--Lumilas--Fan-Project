@@ -79,7 +79,7 @@ public class UI : MonoBehaviour
     public GameObject enemyActionObject;
     private List<string> scoreBoardStrings;
     private List<Vector2Int> scoreBoardList;
-    private string[] wispNames = { "Dynia  ", "Serce  ", "Wiedźma", "Ognik  " };
+    private string[] wispNames = { "Dynie   ", "Serca   ", "Wiedźmy ", "Ogniki  " };
     private bool skipScoringAnimation = false;
 
     [Header("Game Over Screen")]
@@ -97,11 +97,13 @@ public class UI : MonoBehaviour
     public Score scoreManager;
     public MoveCamera cameraMover;
     public EnemyManager enemyManager;
+    public Tutorial tutorial;
+
 
 
     void Start()
     {
-        scoreText.text = "Score: 0";
+        scoreText.text = "Punkty: 0";
         int hiScore = SaveSystem.LoadHighscore();
         highscoreText.gameObject.SetActive(hiScore > 0);
         highscoreText.text = highscoreText.text + " " + hiScore;
@@ -139,6 +141,8 @@ public class UI : MonoBehaviour
         {
             print("HS wynosi: " + x);
         }
+
+        if (PlayerPrefs.HasKey("CardSetIndex")) firstTime = false;
 
     }
 
@@ -263,7 +267,7 @@ public class UI : MonoBehaviour
 
     public void UpdateScore(int score)
     {
-        scoreText.text = "Score: " + score;
+        scoreText.text = "Punkty: " + score;
     }
 
     public void UpdateDetailedScore(int[] scoreArray)
@@ -271,8 +275,9 @@ public class UI : MonoBehaviour
         detailedScoreNode.SetActive(true);
         for (int i = 0; i < scoreArray.Length; ++i)
         {
-            detailedScoreTexts[i].text = "Score: " + scoreArray[i];
+            detailedScoreTexts[i].text = "Punkty: " + scoreArray[i];
         }
+        if (gameManager.tutorialMode && gameManager.round == 1) tutorial.Next();
     }
 
     public void UpdateTopText(string newText)
@@ -287,6 +292,7 @@ public class UI : MonoBehaviour
 
     public void ShowNextRoundButton()
     {
+        if (gameManager.tutorialMode && gameManager.round == 1) tutorial.Next();
         if (round < 6)
         {
             nextRoundButton.SetActive(true);
@@ -303,7 +309,8 @@ public class UI : MonoBehaviour
 
     public void ShowPondActions()
     {
-        CatActionWispsButton.SetActive(true);
+        if (gameManager.tutorialMode && tutorial.tutIndex < 30) CatActionWispsButton.SetActive(false);
+        else CatActionWispsButton.SetActive(true);
         CatActionsShapesButton.SetActive(false);
         pondActions.SetActive(true);
         dealNewWispsButton.SetActive(gameManager.CanDealNewWispsForFree());
@@ -318,6 +325,7 @@ public class UI : MonoBehaviour
     {
         treeCounter.text = "0/3";
         treeCounterInt = 0;
+        undoArrow.GetComponent<Button>().interactable = !(gameManager.tutorialMode && tutorial.tutIndex < 28);
         treeTurnActions.SetActive(true);
     }
 
@@ -330,12 +338,12 @@ public class UI : MonoBehaviour
     public void ShowCatShapesButton()
     {
         CatActionWispsButton.SetActive(false);
-        CatActionsShapesButton.SetActive(true);
+        if (!gameManager.tutorialMode || tutorial.tutIndex > 31) CatActionsShapesButton.SetActive(true);
     }
     public void ShowArrows(bool isCatTurn = false)
     {
         ArrowButtons.SetActive(true);
-        undoArrow.SetActive(!isCatTurn);
+        undoArrow.SetActive(!isCatTurn && !(gameManager.tutorialMode && tutorial.tutIndex < 28));
         ArrowForShapesButtons.SetActive(false);
     }
 
@@ -347,6 +355,7 @@ public class UI : MonoBehaviour
 
     public void ShowArrowsForShapes()
     {
+        undoArrow.SetActive(!(gameManager.tutorialMode && tutorial.tutIndex < 28));
         ArrowButtons.SetActive(true);
         ArrowForShapesButtons.SetActive(true);
     }
@@ -368,6 +377,9 @@ public class UI : MonoBehaviour
 
     public IEnumerator InitializeGhostScoreboard(List<int> wispMultipliers)
     {
+
+        
+
         List<Vector2Int> tempList = new List<Vector2Int>();
         for (int i = 0; i < wispMultipliers.Count; i++)
         {
@@ -411,6 +423,13 @@ public class UI : MonoBehaviour
                 tempText += tempList[i].x + "p. " + wispNames[tempList[j].y] + "\n";
             }
             ghostScoreboard.text = tempText;
+
+        }
+
+        if (gameManager.tutorialMode)
+        {
+            yield return new WaitForSeconds(0.5f);
+            tutorial.Next();
         }
 
         while (counter < 2* baseTime && !skipScoringAnimation)
@@ -445,6 +464,7 @@ public class UI : MonoBehaviour
         ghostScoreboard.text = goalBoard;
         
         ghostButton.SetActive(false);
+        
         yield return new WaitForSeconds(2);
         ghostScoreWindow.SetActive(false);
         ghostButton.SetActive(true);
@@ -455,6 +475,7 @@ public class UI : MonoBehaviour
     public void UpdateGhostScore(List<int> collectedWisps, int newWisp)
     {
         string result = "";
+
         for (int i = 0; i < scoreBoardList.Count; ++i)
         {
             int amount = collectedWisps[scoreBoardList[i].y];
@@ -498,6 +519,11 @@ public class UI : MonoBehaviour
 
     public void ShowLastTurn()
     {
+        if (gameManager.tutorialMode && gameManager.round == 1)
+        {
+            while (tutorial.tutIndex <= tutorial.treeTurnInfoIndex || tutorial.headers[tutorial.tutIndex] != "") ++tutorial.tutIndex;
+            tutorial.Next();
+        }
         lastTurnText.gameObject.SetActive(true);
         StartCoroutine(AnimateLastTurn());
     }
@@ -522,13 +548,20 @@ public class UI : MonoBehaviour
     public IEnumerator ShowEnemyScoreRound(List <int> scoreArray, int oldTotalSum)
     {
         skipScoringAnimation = false;
-        //yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
+
         ghostScoreWindow.SetActive(true);
         int runda = gameManager.round - 1;
+        bool tutorialShowed = false;
         for (int i =0; i < 7; ++i)
         {
 
             yield return new WaitForSeconds(gameManager.fastMode ? 0.1f : 0.5f);
+            if (gameManager.tutorialMode && gameManager.round == 1 && !tutorialShowed)
+            {
+                tutorialShowed = true;
+                tutorial.Next();
+            }
             if (skipScoringAnimation) i = 6;
             string tempText = "1    2    3";
             for (int j = 0;  j < scoreArray.Count; ++j)
