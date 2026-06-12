@@ -573,6 +573,93 @@ public class GridManager : MonoBehaviour
             y--;
         }
     }
+    
+    public void DeleteEmptyRowsAndColumns()
+    {
+        int moveX = 0;
+        int moveY = 0;
+
+        Stack<int> emptyRowsFirst = new Stack<int>();
+        Stack<int> emptyRowsLast = new Stack<int>();
+
+        bool foundNotEmptyRow = false;
+        for (int i = 0; i < gridList.Count; ++i)
+        {
+            bool isEmpty = true;
+            for (int j = 0; j < gridList[i].Count; ++j)
+            {
+                if (gridList[i][j] != 0) isEmpty = false;
+            }
+            if (!isEmpty)
+            {
+                foundNotEmptyRow = true;
+                emptyRowsLast = new Stack<int>();
+                continue;
+            }
+            if (foundNotEmptyRow) emptyRowsLast.Push(i);
+            else emptyRowsFirst.Push(i);
+        }
+        while (emptyRowsLast.Count > 0)
+        {
+            moveX++;
+            int index = emptyRowsLast.Pop();
+            gridList.RemoveAt(index);
+            gridList2.RemoveAt(index);
+            Debug.Log("Top Usunięto " + index);
+        }
+        while (emptyRowsFirst.Count > 0)
+        {
+            moveX--;
+            int index = emptyRowsFirst.Pop();
+            gridList.RemoveAt(index);
+            gridList2.RemoveAt(index);
+            Debug.Log("Bottom Usunięto " + index);
+        }
+
+        Stack<int> emptyColumnsFirst = new Stack<int>();
+        Stack<int> emptyColumnsLast = new Stack<int>();
+
+        bool foundNotEmptyColumn = false;
+        for (int j = 0; j < gridList[0].Count; ++j)
+        {
+            bool isEmpty = true;
+            for (int i = 0; i < gridList.Count; ++i)
+            {
+                if (gridList[i][j] != 0) isEmpty = false;
+            }
+            if (!isEmpty)
+            {
+                foundNotEmptyColumn = true;
+                emptyColumnsLast = new Stack<int>();
+                continue;
+            }
+            if (foundNotEmptyColumn) emptyColumnsLast.Push(j);
+            else emptyColumnsFirst.Push(j);
+        }
+        while (emptyColumnsLast.Count > 0)
+        {
+            moveY++;
+            int index = emptyColumnsLast.Pop();
+            foreach (List<int> row in gridList) row.RemoveAt(index);
+            foreach (List<GameObject> row in gridList2) row.RemoveAt(index);
+            Debug.Log("Right Usunięto " + index);
+        }
+        while (emptyColumnsFirst.Count > 0)
+        {
+            moveY--;
+            int index = emptyColumnsFirst.Pop();
+            foreach (List<int> row in gridList) row.RemoveAt(index);
+            foreach (List<GameObject> row in gridList2) row.RemoveAt(index);
+            Debug.Log("Left Usunięto " + index);
+        }
+
+
+        print("Zmniejszam?");
+        printInnerGrid();
+        StartCoroutine(CenterGrid(moveX * moveCenter, moveY*moveCenter));
+        
+    }
+
     public void AddTileFromShape(int x, int y, GameObject existingTile, int tileType)
     {
         gridList[x][y] = tileType;
@@ -694,6 +781,14 @@ public class GridManager : MonoBehaviour
         {
             if (Time.timeScale == 0) return;
             StartCoroutine(UndoTreeTurn());
+        }
+
+        //NEXT TURN
+        if (i == 10)
+        {
+            ResetUndoValues();
+            if (isLastTurn || IsFull()) gameManager.FinishRound();
+            else gameManager.NextPlayer();
         }
     }
 
@@ -844,6 +939,8 @@ public class GridManager : MonoBehaviour
             userInterface.HideArrows();
             userInterface.HideYouCanMoveCat();
             movingCat = false;
+            Deforest();
+            DeleteEmptyRowsAndColumns();
         }
     }
 

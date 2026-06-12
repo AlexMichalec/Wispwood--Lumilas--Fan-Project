@@ -228,14 +228,17 @@ public class Score : MonoBehaviour
         int counter = 0;
         for (int i = 0; i < gridList.Count; ++i)
         {
-            for (int j = 0; j < gridList.Count; ++j)
+            for (int j = 0; j < gridList[i].Count; ++j)
             {
                 if (gridList[i][j] == 2)
                 {
                     int tempCounter = 0;
-                    for (int k = 0; k < gridList.Count; ++k)
+                    for (int k = 0; k < gridList[i].Count; ++k)
                     {
                         if (gridList[i][k] == 2) tempCounter++;
+                    }
+                    for (int k = 0; k < gridList.Count; ++k)
+                    {
                         if (gridList[k][j] == 2) tempCounter++;
                     }
                     // 2 because for wold count it twice ^

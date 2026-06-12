@@ -234,7 +234,8 @@ public class GameManager : MonoBehaviour
     public void NewRound()
     {
         round++;
-        gridManager.Deforest();
+       // gridManager.Deforest();
+        //gridManager.DeleteEmptyRowsAndColumns();
         gridManager.movingCat = false;
         gridManager.maxDimension += 1;
         userInterface.UpdateTopText("Runda " + round + "\n" + (round + 3) + "x" + (round + 3));

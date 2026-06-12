@@ -85,6 +85,7 @@ public class EnemyManager : MonoBehaviour
         {
             howFar = currentFireflies.Dequeue();
             userInterface.UpdateFireflies(howFar, currentFireflies.Count);
+            isLastTurn = currentFireflies.Count == 0;
         }
 
 
